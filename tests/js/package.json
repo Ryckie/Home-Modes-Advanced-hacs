@@ -1,0 +1,12 @@
+{
+  "name": "home-modes-cards-tests",
+  "private": true,
+  "description": "Browserless checks for the Lovelace cards (jsdom). Not shipped with the integration.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-force-exit"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}

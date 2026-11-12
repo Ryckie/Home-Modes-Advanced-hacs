@@ -1,0 +1,6 @@
+pytest-homeassistant-custom-component==0.13.375
+pytest-cov
+# Needed by the conversation tests (tests/test_intent.py). The intents package is pinned
+# per Home Assistant version in .github/workflows/tests.yml.
+hassil==3.12.1
+gazetteer-matcher==1.1.0

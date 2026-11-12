@@ -1,0 +1,72 @@
+set_mode:
+  fields:
+    mode:
+      required: true
+      example: night
+      selector:
+        text:
+    override:
+      required: false
+      selector:
+        boolean:
+
+set_overlay:
+  fields:
+    overlay:
+      required: true
+      example: guest
+      selector:
+        text:
+    active:
+      required: true
+      default: true
+      selector:
+        boolean:
+
+revert:
+
+set_temporary:
+  fields:
+    mode:
+      required: true
+      example: away
+      selector:
+        text:
+    duration:
+      required: true
+      default:
+        hours: 1
+      selector:
+        duration:
+
+set_auto:
+
+clear_history:
+
+import_input_select:
+  fields:
+    entity_id:
+      required: true
+      example: input_select.house_mode
+      selector:
+        entity:
+          domain: input_select
+    mapping:
+      required: false
+      example: '{"Home": "home", "Movie": "custom", "Party": "skip"}'
+      selector:
+        object:
+    confirm:
+      required: false
+      default: false
+      selector:
+        boolean:
+    mirror:
+      required: false
+      default: false
+      selector:
+        boolean:
+    mirror_overlays:
+      required: false
+      selector:
+        boolean:

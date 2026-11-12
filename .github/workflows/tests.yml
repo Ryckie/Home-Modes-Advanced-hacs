@@ -1,0 +1,90 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.14" # Home Assistant 2026.10.4 and 2026.11.1 require >=3.14.2; 3.14.2 itself breaks the recorder test fixture (mock reads a TYPE_CHECKING-only annotation), 3.14.6 passes
+
+jobs:
+  lint:
+    name: Ruff and mypy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements_test.txt ruff==0.17.5 mypy==2.4.1
+      - run: ruff format --check custom_components tests
+      - run: ruff check custom_components tests
+      - run: mypy
+
+  frontend:
+    name: Cards (syntax and jsdom checks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tests/js/package-lock.json
+      - run: node --check custom_components/home_modes/frontend/home-modes-cards.js
+      - name: jsdom checks
+        working-directory: tests/js
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+
+  tests:
+    name: Tests (Home Assistant ${{ matrix.ha }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # 2026.10.4 is the primary target. 2026.11.x is best-effort until
+    # pytest-homeassistant-custom-component supports it.
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ha: "2026.10.4"
+            experimental: false
+            runner: "pytest"
+            intents: "2026.10.6"
+          - ha: "2026.11.1"
+            experimental: true
+            runner: "python tests/run_pytest_ha2611.py"
+            intents: "2026.10.27"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements_test.txt
+          python -m pip install "homeassistant==${{ matrix.ha }}" "home-assistant-intents==${{ matrix.intents }}"
+      - name: Run tests
+        run: ${{ matrix.runner }} --cov-fail-under=90

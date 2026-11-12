@@ -1,0 +1,137 @@
+blueprint:
+  name: "Home Modes: heating setback in Away and Vacation"
+  description: >-
+    Lowers the heating target while the **Away** or **Vacation** role is active, and
+    restores the normal target when neither is active any more.
+
+
+    It follows the roles, not the names: pick the roles' binary sensors
+    (`binary_sensor.home_mode_away`, `binary_sensor.home_mode_vacation`). Renaming the modes
+    in Home Modes Advanced does not break it.
+
+
+    The thermostat is set with `climate.set_temperature`; check that your thermostat accepts
+    it in heat mode.
+  domain: automation
+  author: Ryckie (community integration, not official)
+  source_url: https://github.com/Ryckie/Home-Modes-Advanced/blob/main/blueprints/automation/home_modes/heating_setback_away_vacation.yaml
+  homeassistant:
+    min_version: 2026.10.4
+  input:
+    away_sensor:
+      name: Away role sensor
+      default: binary_sensor.home_mode_away
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: home_modes
+    vacation_sensor:
+      name: Vacation role sensor
+      description: >-
+        Keep the default if you do not use the Vacation role: a sensor that does not exist
+        counts as off.
+      default: binary_sensor.home_mode_vacation
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: home_modes
+    thermostats:
+      name: Thermostats
+      selector:
+        target:
+          entity:
+            domain: climate
+    setback_temperature:
+      name: Setback temperature
+      description: Target while nobody is home.
+      default: 16
+      selector:
+        number:
+          min: 5
+          max: 30
+          step: 0.5
+          mode: box
+    normal_temperature:
+      name: Normal temperature
+      description: Target restored when Away and Vacation are both off.
+      default: 20
+      selector:
+        number:
+          min: 5
+          max: 30
+          step: 0.5
+          mode: box
+    settle_seconds:
+      name: Settle time (seconds)
+      description: >-
+        Wait this long after a change before acting, so that going from Away straight to
+        Vacation (one role turns off, the other on) does not briefly restore the normal
+        temperature.
+      default: 5
+      selector:
+        number:
+          min: 0
+          max: 60
+          unit_of_measurement: s
+
+mode: restart
+max_exceeded: silent
+
+variables:
+  away_sensor: !input away_sensor
+  vacation_sensor: !input vacation_sensor
+  setback_temperature: !input setback_temperature
+  normal_temperature: !input normal_temperature
+
+triggers:
+  - trigger: state
+    entity_id: !input away_sensor
+    id: changed
+  - trigger: state
+    entity_id: !input vacation_sensor
+    id: changed
+
+conditions:
+  # Only real on/off changes. Attribute-only updates, and the unavailable/unknown flicker when
+  # the integration reloads, do not count.
+  - condition: template
+    value_template: >-
+      {{ trigger.from_state is not none and trigger.to_state is not none
+         and trigger.from_state.state in ['on', 'off']
+         and trigger.to_state.state in ['on', 'off']
+         and trigger.from_state.state != trigger.to_state.state }}
+
+actions:
+  - delay:
+      seconds: !input settle_seconds
+  - choose:
+      - alias: Away or Vacation is active
+        conditions:
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: !input away_sensor
+                state: "on"
+              - condition: state
+                entity_id: !input vacation_sensor
+                state: "on"
+        sequence:
+          - action: climate.set_temperature
+            target: !input thermostats
+            data:
+              temperature: "{{ setback_temperature }}"
+      - alias: Neither is active
+        conditions:
+          - condition: state
+            entity_id: !input away_sensor
+            state: "off"
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: !input vacation_sensor
+                state: "on"
+        sequence:
+          - action: climate.set_temperature
+            target: !input thermostats
+            data:
+              temperature: "{{ normal_temperature }}"

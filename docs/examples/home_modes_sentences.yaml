@@ -1,0 +1,32 @@
+# Copy this file to <config>/custom_sentences/en/home_modes.yaml and restart Home Assistant
+# (or reload conversation sentences). See docs/assist.md.
+language: "en"
+intents:
+  HomeModesSetMode:
+    data:
+      - sentences:
+          - "set [the] house mode to {mode}"
+          - "switch [the] house to {mode} mode"
+          - "change [the] house mode to {mode}"
+  HomeModesSetOverlay:
+    data:
+      - sentences:
+          - "turn {state} [the] {overlay} mode"
+          - "turn [the] {overlay} mode {state}"
+lists:
+  # Wildcard: whatever you say after "to" is looked up by name (or id) among your modes.
+  mode:
+    wildcard: true
+  state:
+    values:
+      - in: "on"
+        out: "on"
+      - in: "off"
+        out: "off"
+  # Overlays are few, so they are listed. "out" must be the overlay's role id.
+  overlay:
+    values:
+      - in: "guest"
+        out: "guest"
+      - in: "do not disturb"
+        out: "dnd"

@@ -1,0 +1,79 @@
+blueprint:
+  name: "Home Modes: lights off when the mode becomes Night"
+  description: >-
+    Turns the chosen lights off when the **Night** role becomes active.
+
+
+    It follows the role, not the name: pick the role's binary sensor (for example
+    `binary_sensor.home_mode_night`). Renaming the mode in Home Modes Advanced does not
+    break this automation. To use another mode, pick another role sensor
+    (`binary_sensor.home_mode_custom_1`, ...).
+  domain: automation
+  author: Ryckie (community integration, not official)
+  source_url: https://github.com/Ryckie/Home-Modes-Advanced/blob/main/blueprints/automation/home_modes/lights_off_at_night.yaml
+  homeassistant:
+    min_version: 2026.10.4
+  input:
+    night_sensor:
+      name: Role sensor
+      description: The role that switches the lights off (default is the Night role).
+      default: binary_sensor.home_mode_night
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: home_modes
+    lights:
+      name: Lights
+      description: Lights, areas or devices to turn off.
+      selector:
+        target:
+          entity:
+            domain: light
+    transition:
+      name: Transition (seconds)
+      description: How long the lights take to fade out. 0 switches them off at once.
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 300
+          unit_of_measurement: s
+    skip_while_on:
+      name: Do not switch off while this is on (optional)
+      description: >-
+        For example `binary_sensor.home_mode_guest`: keep the lights as they are while the
+        Guest overlay is on. Leave empty to always switch off.
+      default: ""
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: home_modes
+          multiple: false
+
+mode: restart
+max_exceeded: silent
+
+variables:
+  night_sensor: !input night_sensor
+  skip_while_on: !input skip_while_on
+  transition: !input transition
+
+triggers:
+  - trigger: state
+    entity_id: !input night_sensor
+    from: "off"  # not from unavailable: a reload of the integration must not re-run it
+    to: "on"
+
+conditions:
+  # The role is still active when the automation runs (a queued run must not act late).
+  - condition: state
+    entity_id: !input night_sensor
+    state: "on"
+  - condition: template
+    value_template: "{{ skip_while_on == '' or is_state(skip_while_on, 'off') }}"
+
+actions:
+  - action: light.turn_off
+    target: !input lights
+    data:
+      transition: "{{ transition | int(0) }}"

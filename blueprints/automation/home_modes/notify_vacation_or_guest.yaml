@@ -1,0 +1,81 @@
+blueprint:
+  name: "Home Modes: notify when Vacation starts or Guest turns on"
+  description: >-
+    Sends a notification when the **Vacation** role becomes active or the **Guest** overlay
+    is switched on.
+
+
+    It follows the roles, not the names: pick the roles' binary sensors
+    (`binary_sensor.home_mode_vacation`, `binary_sensor.home_mode_guest`). Renaming the
+    modes does not break it.
+
+
+    Choose what to do in *Notification action*, for example a `notify.mobile_app_<phone>`
+    action. The text is available there as `{{ message }}` and the reason as
+    `{{ what }}` (`vacation` or `guest`). Home Modes Advanced also has built-in
+    notifications (options, Notifications); this blueprint is for people who prefer an
+    automation.
+  domain: automation
+  author: Ryckie (community integration, not official)
+  source_url: https://github.com/Ryckie/Home-Modes-Advanced/blob/main/blueprints/automation/home_modes/notify_vacation_or_guest.yaml
+  homeassistant:
+    min_version: 2026.10.4
+  input:
+    vacation_sensor:
+      name: Vacation role sensor
+      default: binary_sensor.home_mode_vacation
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: home_modes
+    guest_sensor:
+      name: Guest overlay sensor
+      default: binary_sensor.home_mode_guest
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: home_modes
+    notify_actions:
+      name: Notification action
+      description: What to run. Use `{{ message }}` in the text.
+      selector:
+        action: {}
+    vacation_message:
+      name: Message for Vacation
+      default: "House mode: Vacation started."
+      selector:
+        text: {}
+    guest_message:
+      name: Message for Guest
+      default: "Guest mode is on."
+      selector:
+        text: {}
+
+mode: queued
+max: 5
+max_exceeded: silent
+
+variables:
+  vacation_message: !input vacation_message
+  guest_message: !input guest_message
+  what: "{{ trigger.id }}"
+  message: "{{ vacation_message if trigger.id == 'vacation' else guest_message }}"
+
+triggers:
+  - trigger: state
+    entity_id: !input vacation_sensor
+    from: "off"  # not from unavailable: a reload of the integration must not notify
+    to: "on"
+    id: vacation
+  - trigger: state
+    entity_id: !input guest_sensor
+    from: "off"
+    to: "on"
+    id: guest
+
+conditions:
+  # Still on when the run starts (a queued run must not report something that already ended).
+  - condition: template
+    value_template: "{{ is_state(trigger.entity_id, 'on') }}"
+
+actions: !input notify_actions

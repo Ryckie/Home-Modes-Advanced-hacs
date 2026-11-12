@@ -1,0 +1,510 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Home Modes Advanced",
+        "description": "Choose which modes to start with. You can rename, reorder, enable or disable every mode later in the integration options.",
+        "data": {
+          "preset": "Preset"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Home Modes Advanced is already set up. Only one household is supported."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Home Modes options",
+        "menu_options": {
+          "edit_role": "Rename or enable/disable a mode",
+          "move_role": "Change the order of modes",
+          "add_custom": "Add a custom mode",
+          "remove_custom": "Remove a custom mode",
+          "save": "Save and close",
+          "presence": "Presence and away timers",
+          "night": "Night methods",
+          "morning": "Morning methods",
+          "override": "Manual override",
+          "user_rules": "User permissions (guests)",
+          "integrations": "Integrations: actions, Alarmo, vacation, notifications, history"
+        }
+      },
+      "edit_role": {
+        "title": "Choose a mode",
+        "data": {
+          "role": "Mode"
+        }
+      },
+      "edit_details": {
+        "title": "Edit {role}",
+        "data": {
+          "name": "Name",
+          "enabled": "Enabled"
+        },
+        "data_description": {
+          "name": "Shown in the selector and used when calling services. Must be unique.",
+          "enabled": "Disabled modes have no entities and cannot be selected. At least one primary mode (Home, Night, Away, Vacation or a custom mode) must stay enabled."
+        }
+      },
+      "move_role": {
+        "title": "Change the order",
+        "data": {
+          "role": "Mode",
+          "direction": "Move"
+        }
+      },
+      "add_custom": {
+        "title": "Add a custom mode",
+        "data": {
+          "name": "Name"
+        }
+      },
+      "remove_custom": {
+        "title": "Remove a custom mode",
+        "data": {
+          "role": "Custom mode"
+        }
+      },
+      "presence": {
+        "title": "Presence",
+        "description": "Persons that count for all home / all away. Unknown or unavailable person states never trigger a change.",
+        "data": {
+          "persons": "Persons",
+          "away_delay_min": "Away delay",
+          "vacation_after_h": "Vacation after"
+        },
+        "data_description": {
+          "away_delay_min": "Minutes everybody must stay away before Away (or All away) is set.",
+          "vacation_after_h": "Hours of continuous all away before Vacation is set (only if Vacation is enabled)."
+        }
+      },
+      "night": {
+        "title": "Night methods",
+        "description": "Choose any combination. Time window is a schedule rule; sleep sensors and phone charging are sensor rules. Phone charging only counts inside the time window.",
+        "data": {
+          "methods": "Methods",
+          "start": "Window start",
+          "end": "Window end",
+          "sleep_sensors": "Sleep sensors",
+          "charging_sensors": "Phone charging sensors"
+        }
+      },
+      "morning": {
+        "title": "Morning methods",
+        "description": "Choose any combination. Time is a schedule rule; motion and alarm are sensor rules. Motion only counts from the earliest time until the night window starts.",
+        "data": {
+          "methods": "Methods",
+          "time": "Morning time",
+          "earliest": "Earliest time for motion",
+          "motion_sensors": "Motion sensors",
+          "alarm_sensors": "Next alarm sensors"
+        }
+      },
+      "override": {
+        "title": "Manual override",
+        "description": "A mode change made by a user starts an override that blocks lower-priority auto-rules.",
+        "data": {
+          "until": "Override ends",
+          "duration_min": "Duration"
+        },
+        "data_description": {
+          "duration_min": "Used when the override ends after a duration."
+        }
+      },
+      "user_rules": {
+        "title": "User permissions",
+        "description": "Admins are always unrestricted. Users who are not listed are unrestricted. An allow-list user can only set the modes selected below.",
+        "data": {
+          "user": "User",
+          "mode": "Rule",
+          "roles": "Allowed modes"
+        }
+      },
+      "integrations": {
+        "title": "Integrations",
+        "menu_options": {
+          "actions": "Enter and exit actions",
+          "alarmo": "Alarmo bridge",
+          "vacation": "Vacation simulation",
+          "notify": "Notifications",
+          "history": "History log",
+          "init": "Back",
+          "import_input_select": "Import from input_select"
+        }
+      },
+      "actions": {
+        "title": "Enter and exit actions",
+        "description": "Pick the mode (or overlay) whose actions you want to edit. Every action runs as its own script with the timeout below; a failing or slow action never blocks the mode change.",
+        "data": {
+          "role": "Mode",
+          "actions_timeout_s": "Timeout per action"
+        }
+      },
+      "actions_edit": {
+        "title": "Actions of {role}",
+        "description": "Exit actions run before the mode changes, enter actions after. Available variables: from_role, to_role (role ids, aliases from_mode and to_mode), from_name, to_name, role, role_name, phase, source, rule, user_id. An action that changes the mode again is applied after the running change and is rate-limited.",
+        "data": {
+          "enter_actions": "Enter actions",
+          "exit_actions": "Exit actions"
+        }
+      },
+      "alarmo": {
+        "title": "Alarmo bridge",
+        "description": "Optional and off by default. Home Modes only talks to Alarmo's entity and services, and works normally when Alarmo is missing.\n\nNo alarm code is ever stored. If Alarmo requires a code to arm or disarm, the bridge reports an error instead of acting; turn the code requirement off in Alarmo for the bridge to work.\n\nTurn this on only when presence-based arming/disarming in the Ring Keypad blueprint is off, otherwise both would act on the alarm.",
+        "data": {
+          "enabled": "Enable the bridge",
+          "direction": "Direction",
+          "entity_id": "Alarmo entity",
+          "apply_auto": "Apply automatic mode changes to Alarmo"
+        },
+        "data_description": {
+          "entity_id": "Leave empty to use the only Alarmo alarm panel.",
+          "apply_auto": "Off by default. When on, changes made by schedules, sensors, presence and temporary-mode expiry may arm Alarmo (and disarm it where a mapping allows it)."
+        }
+      },
+      "alarmo_map": {
+        "title": "Alarmo state: {state}",
+        "description": "Map this Alarmo state to a Home Modes mode.",
+        "data": {
+          "role": "Mode",
+          "to_alarmo": "Mode change sets this Alarmo state",
+          "from_alarmo": "Alarmo state sets this mode"
+        }
+      },
+      "alarmo_map_disarmed": {
+        "title": "Alarmo state: {state}",
+        "description": "WARNING: switching to this mode would DISARM your alarm. This never happens unless 'Allow disarming Alarmo' is on, is never done for allow-list users, and never for automatic changes unless they are enabled on the previous screen. Leave it off unless you fully understand the risk.",
+        "data": {
+          "role": "Mode",
+          "to_alarmo": "Mode change sets this Alarmo state",
+          "from_alarmo": "Alarmo state sets this mode",
+          "allow_disarm": "Allow disarming Alarmo (dangerous)"
+        }
+      },
+      "vacation": {
+        "title": "Vacation simulation",
+        "description": "While the selected modes are active, the selected lights are switched on and off to look like someone is home. Only these lights are touched. Nothing is notified; the history shows when it starts and stops.",
+        "data": {
+          "enabled": "Enable the simulation",
+          "roles": "Run while this mode is active",
+          "strategy": "Strategy",
+          "lights": "Lights",
+          "start": "Evening window starts",
+          "end": "Evening window ends",
+          "min_on_min": "Shortest time on",
+          "max_on_min": "Longest time on",
+          "min_gap_min": "Shortest gap between switching on"
+        },
+        "data_description": {
+          "strategy": "Replay copies last week's same weekday from the recorder and falls back to random if there is no history."
+        }
+      },
+      "notify": {
+        "title": "Notifications",
+        "description": "No notification is sent until you add a rule with at least one target.",
+        "menu_options": {
+          "notify_add": "Add a rule",
+          "notify_remove": "Remove a rule",
+          "notify_settings": "Duplicate rate limit",
+          "integrations": "Back"
+        }
+      },
+      "notify_add": {
+        "title": "Add a notification rule",
+        "description": "Templates may use: from_role, to_role (role ids, stable), from_name, to_name, role_name (display names), role, source, rule, user, time. from_mode and to_mode are aliases of the ids; 'from' is reserved in Jinja and not available. Mobile app targets use the channels HM_ModeChanges, HM_Alerts and HM_Guests.",
+        "data": {
+          "event": "Event",
+          "role": "Mode (for 'mode changed to')",
+          "targets": "Notify entities",
+          "services": "Notify services (e.g. mobile_app_phone)",
+          "message": "Message template",
+          "title": "Title template"
+        }
+      },
+      "notify_remove": {
+        "title": "Remove a rule",
+        "data": {
+          "rule": "Rule"
+        }
+      },
+      "notify_settings": {
+        "title": "Duplicate rate limit",
+        "description": "The same message is not sent to the same target more than once within this time.",
+        "data": {
+          "rate_limit_s": "Seconds"
+        }
+      },
+      "history": {
+        "title": "History log",
+        "data": {
+          "max_entries": "Maximum number of entries"
+        }
+      },
+      "import_input_select": {
+        "title": "Import from input_select",
+        "description": "Choose the input_select that holds your old house mode. Nothing is written yet; the next steps only show suggestions and a preview.",
+        "data": {
+          "entity_id": "Input select"
+        }
+      },
+      "import_map": {
+        "title": "Map the options",
+        "description": "Check what each option of {entity_id} should become. Suggested by name; change anything. Options keep your exact wording as the mode name.\n\n**Mirror to old input_select** is a temporary migration aid: Home Modes writes the matching option of the primary mode to the input_select on every mode change (one direction only), so old automations keep working while you move them. Turn it off when you are done.\n\n**Mirror overlays** (off by default) also writes the option of an active overlay such as Guest. If two overlays are active, the one switched on last wins. When the overlay ends, the primary's option is written again.",
+        "data": {
+          "mirror_to_old_input_select": "Mirror to old input_select (temporary migration aid)",
+          "mirror_overlays": "Mirror overlays (off by default)"
+        }
+      },
+      "import_confirm": {
+        "title": "Preview",
+        "description": "**{entity_id}** will be imported as follows:\n\n{preview}\n\nMirror to old input_select: **{mirror}**. Mirror overlays: **{mirror_overlays}**\n\nAutomations, scripts and helpers that reference it (read-only, nothing is changed):\n\n{usage}\n\nSuggested replacement for one condition:\n\n{example}\n\n**Confirming saves only this import and ends this options session.** Any other change you made in this session and did not save yet is discarded; make those changes again afterwards. Your automations, helpers and YAML are never edited. Use the `home_modes.import_input_select` action for all replacement snippets.",
+        "data": {
+          "confirm": "Apply and save"
+        }
+      }
+    },
+    "error": {
+      "name_required": "A mode needs a name.",
+      "name_exists": "Another mode already uses this name.",
+      "no_primary": "At least one primary mode (Home, Night, Away, Vacation or a custom mode) must stay enabled.",
+      "max_custom_modes": "You can have at most 10 custom modes.",
+      "sensors_required": "Select at least one sensor for this method.",
+      "window_empty": "The start and end time must differ.",
+      "invalid_actions": "These actions are not valid.",
+      "role_required": "Pick a mode.",
+      "duplicate_role": "This mode is already mapped to another Alarmo state in the Home Modes to Alarmo direction.",
+      "lights_required": "Pick at least one light.",
+      "roles_required": "Pick at least one mode.",
+      "window_same_day": "The window must end after it starts, on the same day.",
+      "max_before_min": "The longest time must not be shorter than the shortest.",
+      "no_target": "Pick at least one notify entity or service.",
+      "template_invalid": "This template is not valid.",
+      "input_select_empty": "This input_select does not exist or has no options.",
+      "import_invalid": "This mapping cannot be applied: {problems}"
+    }
+  },
+  "selector": {
+    "preset": {
+      "options": {
+        "simple": "Simple: Home, Night, Away, Vacation",
+        "extended": "Extended: Simple plus All home, All away, Guest and Do not disturb"
+      }
+    },
+    "direction": {
+      "options": {
+        "up": "Up",
+        "down": "Down"
+      }
+    },
+    "night_methods": {
+      "options": {
+        "time_window": "Time window",
+        "sleep_sensors": "Sleep sensors",
+        "phone_charging": "Phone charging",
+        "manual": "Manual only"
+      }
+    },
+    "morning_methods": {
+      "options": {
+        "time": "Time",
+        "motion": "Motion",
+        "alarm": "Next alarm",
+        "manual": "Manual only"
+      }
+    },
+    "override_until": {
+      "options": {
+        "end_of_day": "End of day",
+        "next_auto": "Next auto-rule trigger",
+        "duration": "After a duration",
+        "set_auto": "Until set_auto is called"
+      }
+    },
+    "user_rule_mode": {
+      "options": {
+        "unrestricted": "Unrestricted",
+        "allow_list": "Allow-list (guest)"
+      }
+    },
+    "alarmo_direction": {
+      "options": {
+        "both": "Both directions",
+        "to_alarmo": "Home Modes to Alarmo only",
+        "from_alarmo": "Alarmo to Home Modes only"
+      }
+    },
+    "vacation_strategy": {
+      "options": {
+        "random": "Random",
+        "replay": "Replay last week"
+      }
+    },
+    "notify_event": {
+      "options": {
+        "changed_to": "Mode changed to",
+        "any_change": "Any change",
+        "denied": "Denied attempt",
+        "bridge_error": "Alarmo bridge error",
+        "vacation_entered": "Vacation entered",
+        "guest_on": "Guest overlay turned on"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "role": {
+        "name": "{role_name}"
+      }
+    },
+    "sensor": {
+      "since": {
+        "name": "Since"
+      },
+      "previous": {
+        "name": "Previous"
+      },
+      "trigger_reason": {
+        "name": "Trigger reason",
+        "state": {
+          "manual": "Manual",
+          "schedule": "Schedule",
+          "sensor": "Sensor",
+          "presence": "Presence",
+          "alarmo": "Alarmo",
+          "system": "System",
+          "temporary_expiry": "Temporary mode expired"
+        }
+      }
+    },
+    "switch": {
+      "auto": {
+        "name": "Auto"
+      },
+      "overlay": {
+        "name": "{role_name} overlay"
+      }
+    }
+  },
+  "exceptions": {
+    "permission_denied": {
+      "message": "You are not allowed to change {role}."
+    },
+    "unknown_role": {
+      "message": "Unknown mode: {role}."
+    },
+    "role_disabled": {
+      "message": "The mode {role} is disabled."
+    },
+    "wrong_kind": {
+      "message": "{role} is the wrong kind of mode for this action. Use set_mode for primary modes and set_overlay for overlays."
+    },
+    "cannot_deactivate_primary": {
+      "message": "A primary mode cannot be switched off. Select another primary mode instead."
+    },
+    "not_loaded": {
+      "message": "Home Modes Advanced is not set up."
+    },
+    "no_primary_enabled": {
+      "message": "No primary mode is enabled. Enable at least one primary mode in the options."
+    },
+    "no_previous": {
+      "message": "There is no previous mode to go back to."
+    },
+    "action_loop": {
+      "message": "This change was blocked: too many mode changes were requested by actions in a short time (possible action loop)."
+    },
+    "input_select_not_found": {
+      "message": "{entity_id} is not an existing input_select."
+    },
+    "import_invalid": {
+      "message": "The mapping cannot be applied: {problems}."
+    },
+    "storage_too_new": {
+      "message": "The stored Home Modes data was written by a newer version of this integration. Update Home Modes Advanced again; the data has not been changed."
+    }
+  },
+  "services": {
+    "set_mode": {
+      "name": "Set mode",
+      "description": "Sets the primary house mode.",
+      "fields": {
+        "mode": {
+          "name": "Mode",
+          "description": "The role id (for example night) or the name of an enabled primary mode."
+        },
+        "override": {
+          "name": "Override",
+          "description": "Start a manual override. Defaults to on when a user makes the call and off for automations and scripts without a user."
+        }
+      }
+    },
+    "set_overlay": {
+      "name": "Set overlay",
+      "description": "Turns an overlay mode (Guest, Do not disturb) on or off.",
+      "fields": {
+        "overlay": {
+          "name": "Overlay",
+          "description": "The role id (for example guest) or the name of an overlay mode."
+        },
+        "active": {
+          "name": "Active",
+          "description": "Whether the overlay should be on."
+        }
+      }
+    },
+    "revert": {
+      "name": "Revert",
+      "description": "Goes back to the previous primary mode."
+    },
+    "set_temporary": {
+      "name": "Set temporary mode",
+      "description": "Sets a mode and returns to the previous mode when the time is up.",
+      "fields": {
+        "mode": {
+          "name": "Mode",
+          "description": "The role id or name of an enabled primary mode."
+        },
+        "duration": {
+          "name": "Duration",
+          "description": "How long the temporary mode lasts."
+        }
+      }
+    },
+    "set_auto": {
+      "name": "Set auto",
+      "description": "Clears the override and re-evaluates the auto-rules immediately."
+    },
+    "clear_history": {
+      "name": "Clear history",
+      "description": "Delete all entries of the history log (administrators only)."
+    },
+    "import_input_select": {
+      "name": "Import from input_select",
+      "description": "Suggests how the options of an old input_select map to Home Modes roles and returns a preview, the automations, scripts and template helpers that reference it, and replacement snippets. Nothing is written unless confirm is true. Your automations, helpers and YAML are never edited.",
+      "fields": {
+        "entity_id": {
+          "name": "Input select",
+          "description": "The input_select that holds your old house mode."
+        },
+        "mapping": {
+          "name": "Mapping",
+          "description": "Optional. Maps an option (exact text) to a role id, \"custom\" (new custom mode) or \"skip\". Options you leave out use the suggestion."
+        },
+        "confirm": {
+          "name": "Confirm",
+          "description": "Apply the previewed mapping (renames or enables roles, adds custom modes). Off: preview only."
+        },
+        "mirror": {
+          "name": "Mirror to old input_select",
+          "description": "Temporary migration aid: write the matching option of the primary mode to the input_select on every mode change (one direction only). Only used together with confirm."
+        },
+        "mirror_overlays": {
+          "name": "Mirror overlays",
+          "description": "Also write the option of an active overlay (for example Guest) to the input_select. Off by default. Leave out to keep the stored setting. Only used together with confirm."
+        }
+      }
+    }
+  }
+}

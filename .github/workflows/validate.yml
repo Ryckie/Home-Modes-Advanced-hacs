@@ -1,0 +1,41 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Daily: catches changes in Home Assistant's or HACS's own validation rules.
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  workflow_call:
+
+# No token permissions by default; each job asks for what it needs.
+permissions: {}
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hassfest:
+    name: Hassfest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      # Home Assistant publishes this action only as @master (no version tags).
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    name: HACS validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions: {}
+    steps:
+      # HACS documents @main as the way to use its action (its newest tag is from 2022).
+      - uses: hacs/action@main
+        with:
+          category: integration

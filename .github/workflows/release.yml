@@ -1,0 +1,45 @@
+name: Release
+
+# Push a tag such as v0.9.0 (it must equal "v" + the version in
+# custom_components/home_modes/manifest.json). HACS and the Home Assistant Marketplace read
+# GitHub *releases*; a bare tag is not enough.
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+
+permissions: {}
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+    permissions:
+      contents: read
+
+  tests:
+    uses: ./.github/workflows/tests.yml
+    permissions:
+      contents: read
+
+  release:
+    name: Create the GitHub release
+    needs: [validate, tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # create the release (the only job that writes anything)
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check the tag, manifest, hacs.json and changelog agree
+        id: info
+        run: python .github/scripts/release_info.py "$GITHUB_REF_NAME" --notes release-notes.md >> "$GITHUB_OUTPUT"
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ steps.info.outputs.prerelease }}
+        run: |
+          flags=()
+          if [ "$PRERELEASE" = "true" ]; then flags+=(--prerelease); fi
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release-notes.md "${flags[@]}"
