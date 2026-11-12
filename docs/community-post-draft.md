@@ -40,7 +40,7 @@ community project, not official in any way, and it is a beta.
 **How to install**
 
 - HA 2026.11 and newer: Marketplace → add the repository.
-- Older (2026.10.4+): HACS → Custom repositories → `https://github.com/Ryckie/Home-Modes-Advanced`, category Integration, pre-release.
+- Older (2026.10.4+): one-click button [![Open your Home Assistant instance and add this repository to HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Ryckie&repository=Home-Modes-Advanced-hacs&category=integration) or HACS → Custom repositories → `https://github.com/Ryckie/Home-Modes-Advanced-hacs`, category Integration, pre-release.
 
 **Feedback I would like**
 
@@ -52,7 +52,7 @@ community project, not official in any way, and it is a beta.
 
 Please attach the diagnostics download and a debug log to bug reports (the issue template explains how).
 
-Repository: https://github.com/Ryckie/Home-Modes-Advanced
+Repository: https://github.com/Ryckie/Home-Modes-Advanced-hacs
 Known limits and security notes are in the README.
 
 ---

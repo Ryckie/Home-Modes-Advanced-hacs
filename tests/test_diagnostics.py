@@ -80,7 +80,7 @@ async def test_diagnostics_are_useful_and_redacted(
     assert hass_admin_user.id not in dumped
 
     # Useful content is there.
-    assert diag["versions"]["integration"] == "0.9.0"
+    assert diag["versions"]["integration"] == "0.9.1"
     assert diag["versions"]["home_assistant"]
     assert diag["state"]["primary"] == "custom_1"
     assert diag["state"]["temporary"]["revert_to"] == "night"

@@ -447,6 +447,8 @@ class ChangeEngine:
             return replace(state, overlays=overlays)
         temporary: Temporary | None = None  # any other primary change cancels a temporary
         override = state.override
+        if override is not None and not override.is_active(change.at):
+            override = None  # an expired override never lingers, whatever order timers fire in
         if change.source is ChangeSource.EXPIRY:
             override = None
         elif request.temporary_until is not None:

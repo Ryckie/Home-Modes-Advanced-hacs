@@ -13,11 +13,11 @@
     "http",
     "websocket_api"
   ],
-  "documentation": "https://github.com/Ryckie/Home-Modes-Advanced",
+  "documentation": "https://github.com/Ryckie/Home-Modes-Advanced-hacs",
   "integration_type": "service",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/Ryckie/Home-Modes-Advanced/issues",
+  "issue_tracker": "https://github.com/Ryckie/Home-Modes-Advanced-hacs/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.9.0"
+  "version": "0.9.1"
 }

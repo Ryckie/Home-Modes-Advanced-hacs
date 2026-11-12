@@ -11,7 +11,7 @@ entity, one light (a demo or template light is fine), a phone or browser logged 
 
 | # | Do | Expected |
 |---|---|---|
-| 1 | HACS → three-dot menu → Custom repositories → add `https://github.com/Ryckie/Home-Modes-Advanced`, category **Integration**. Enable "Show beta versions" if v0.9.0 is not listed. Open the repository → Download → choose v0.9.0. (On 2026.11 use Settings → Marketplace instead; UNVERIFIED.) | The repository is added, version **0.9.0** is offered and downloads without errors |
+| 1 | HACS → three-dot menu → Custom repositories → add `https://github.com/Ryckie/Home-Modes-Advanced-hacs`, category **Integration**. Enable "Show beta versions" if v0.9.1 is not listed. Open the repository → Download → choose v0.9.1. (On 2026.11 use Settings → Marketplace instead; UNVERIFIED.) | The repository is added, version **0.9.1** is offered and downloads without errors |
 | 2 | Settings → System → Restart Home Assistant. | Starts normally; the log shows no `home_modes` errors |
 | 3 | Settings → Devices & services → Add integration → **Home Modes Advanced** → preset **Simple** → Submit. | One device "Home Mode" with `select.home_mode` = Home, `binary_sensor.home_mode_home` on, `sensor.home_mode_since`, `switch.home_mode_auto` on. No Guest or DND entities |
 | 4 | Remove the integration (⋮ → Delete), then add it again with preset **Extended**. | Extra entities: `binary_sensor.home_mode_guest`, `..._dnd`, `..._all_home`, `..._all_away`, `switch.home_mode_overlay_guest`, `..._dnd`. Removal in step 4 left no orphaned entities |
@@ -39,7 +39,7 @@ Attach to a GitHub issue (use the bug report template):
 
 Specific hints:
 
-- Step 1, version 0.9.0 not shown: say which listing you used (HACS or Marketplace) and whether
+- Step 1, version 0.9.1 not shown: say which listing you used (HACS or Marketplace) and whether
   beta versions were enabled. This is an open question (UNVERIFIED).
 - Step 3, integration not found: restart again and clear the browser cache; attach the log lines
   about `custom_components/home_modes` or "Integration not found".

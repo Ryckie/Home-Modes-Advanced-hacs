@@ -1,6 +1,6 @@
 name: Release
 
-# Push a tag such as v0.9.0 (it must equal "v" + the version in
+# Push a tag such as v0.9.1 (it must equal "v" + the version in
 # custom_components/home_modes/manifest.json). HACS and the Home Assistant Marketplace read
 # GitHub *releases*; a bare tag is not enough.
 on:

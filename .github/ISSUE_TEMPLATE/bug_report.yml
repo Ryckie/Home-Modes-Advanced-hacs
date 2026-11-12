@@ -5,13 +5,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please read the [priority and override rules](https://github.com/Ryckie/Home-Modes-Advanced/blob/main/docs/priority-and-overrides.md) first; many surprises are documented behaviour.
+        Please read the [priority and override rules](https://github.com/Ryckie/Home-Modes-Advanced-hacs/blob/main/docs/priority-and-overrides.md) first; many surprises are documented behaviour.
         **Do not post passwords, tokens or Alarmo codes.** Look through the files you attach.
   - type: input
     id: version
     attributes:
       label: Home Modes Advanced version
-      placeholder: "0.9.0"
+      placeholder: "0.9.1"
     validations:
       required: true
   - type: input

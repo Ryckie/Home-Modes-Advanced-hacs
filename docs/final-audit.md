@@ -1,4 +1,4 @@
-# Final audit against the brief (version 0.9.0)
+# Final audit against the brief (version 0.9.1)
 
 Sources: the master brief, the amendments of Steps 2 to 6 and the answers given after each step.
 "Test" names the file (and test) that proves the item; "n/a" means it is not testable
@@ -9,12 +9,12 @@ Numbers, from a clean environment with the exact commands of `.github/workflows/
 
 | Job | Command | Result |
 |---|---|---|
-| Home Assistant 2026.10.4 | `pytest --cov-fail-under=90` | **325 passed**, 0 skipped, 0 failed; coverage **98.22 %** (3262 statements, 58 missed) |
-| Home Assistant 2026.11.1 | `python tests/run_pytest_ha2611.py --cov-fail-under=90` | **325 passed**, 0 skipped, 0 failed, 1 warning; coverage **98.22 %** (3262 statements, 58 missed) |
+| Home Assistant 2026.10.4 | `pytest --cov-fail-under=90` | **325 passed**, 0 skipped, 0 failed; coverage **98.16 to 98.22 %** over 4 runs (3262 statements, 58 to 61 missed) |
+| Home Assistant 2026.11.1 | `python tests/run_pytest_ha2611.py --cov-fail-under=90` | **325 passed**, 0 skipped, 0 failed, 1 warning; coverage **98.19 %** (3262 statements, 59 missed) |
 | Cards | `node --check` and `npm test` (Node 22) | 11 tests, 11 passed, 0 skipped |
 | Lint | `ruff format --check`, `ruff check` (0.17.5), `mypy` (2.4.1) | clean, 66 files, 28 source files |
 
-Coverage varies by about 0.03 points between runs (58 or 59 missed statements; timing-dependent branches).
+Coverage varies by up to 0.06 points between runs (timing-dependent branches). The suite was also run 4 times in a row on 2026.10.4 and once more on 2026.11.1 after the last code change: always 325 passed.
 The `pytest -v` variant also passes (325).
 
 The GitHub workflows and everything on real devices have **not** been run.
@@ -118,7 +118,7 @@ The GitHub workflows and everything on real devices have **not** been run.
 | tests.yml: ruff, mypy, JS, matrix 2026.10.4 required / 2026.11.1 best effort, Python 3.14 (latest patch) | `tests.yml` | static test above; the steps were reproduced locally with equivalent virtual environments | partly | See "Not run" below |
 | 10x load/unload/reload leak test | `tests/test_lifecycle.py` | itself | done | `engine.async_stop` is not detected by the leak test |
 | Upgrade test; removal test | `tests/test_lifecycle.py` | itself | done | Recorder history stays until the recorder purges it; nothing of ours stays |
-| Release workflow; release script; first tag v0.9.0 pre-release | `release.yml`, `.github/scripts/release_info.py` | `test_release_files.py::test_release_script_*` | partly | Script tested; the workflow itself never ran |
+| Release workflow; release script; first tag v0.9.1 pre-release | `release.yml`, `.github/scripts/release_info.py` | `test_release_files.py::test_release_script_*` | partly | Script tested; the workflow itself never ran |
 | README with community notice, why, features, install, quick start, screenshot placeholders, status, security notes, Companion push note | `README.md` | `test_release_files.py::test_every_doc_is_linked_from_the_readme` | done | |
 | CHANGELOG, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue and PR templates | repository root, `.github/` | `test_release_files.py` | done | Private vulnerability reporting must be enabled in the repository settings |
 | Brand images | `custom_components/home_modes/brand/` | `test_release_files.py::test_brand_images_have_the_documented_sizes` | partly | **Placeholders**; must be replaced |
@@ -133,7 +133,7 @@ The GitHub workflows and everything on real devices have **not** been run.
 
 ## 8. "No cloud, no external dependencies": the scan
 
-Commands and results (run in the repository at version 0.9.0):
+Commands and results (run in the repository at version 0.9.1):
 
 - `manifest.json`: `"requirements": []`.
 - Python, an AST scan of every module in `custom_components/home_modes/` for imports of
@@ -224,7 +224,7 @@ history/diagnostics redaction. These have tests, but I did not show that the tes
 | 2 | High | The guest model is not a security boundary: HA has no per-service permissions; automations are trusted | Server-side checks for what the integration controls; security notes in README and guest docs; tests including scripts | Users must follow the recommendations; nothing more is possible in the integration |
 | 3 | Medium | Alarmo bridge behaviour with real Alarmo timing (exit delay, state names) differs from the fake | Safety defaults (no disarm, no auto-arming), loop guard with expected-state suppression | Real Alarmo test script |
 | 4 | Medium | The CI has never run on GitHub; pinned action versions were taken from release pages and could not be confirmed on a runner | Workflows reviewed; steps reproduced locally in equivalent environments | Run once, fix |
-| 5 | Medium | Distribution: HACS pre-release behaviour and the Marketplace are unverified | Documented install paths | Test v0.9.0 via a custom repository |
+| 5 | Medium | Distribution: HACS pre-release behaviour and the Marketplace are unverified | Documented install paths | Test v0.9.1 via a custom repository |
 | 6 | Medium | Auto-rule behaviour surprises users (next_auto, vacation timers, expiry re-evaluation) | Detailed rules and a decisions table | Feedback from testers |
 | 7 | Medium | CI Python version: Python 3.14.2 exactly makes one test (`test_vacation_recorder.py`) error in its fixture; HA requires only >=3.14.2. Found in the clean run | CI now uses `3.14` (latest patch); 3.14.6 passes | Confirm the runner resolves `3.14` and the job is green |
 | 8 | Low | The card's real rendering and the visual editors may break on a Home Assistant frontend change | Uses standard `ha-*` elements and CSS variables; jsdom checks | Manual checklist |
@@ -236,7 +236,7 @@ history/diagnostics redaction. These have tests, but I did not show that the tes
 
 ## 11. Recommendation
 
-- **Public beta (v0.9.0 as a GitHub pre-release): GO**, with these conditions before announcing:
+- **Public beta (v0.9.1 as a GitHub pre-release): GO**, with these conditions before announcing:
   1. Replace the brand placeholders (or accept visible placeholders for the beta and say so).
   2. Enable private vulnerability reporting, Issues, topics and the description.
   3. Run the workflows once on GitHub and fix what they report.

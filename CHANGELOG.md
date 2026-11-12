@@ -6,6 +6,29 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-13
+
+Second beta (pre-release). The first tag to publish; 0.9.0 was never published.
+
+### Fixed
+
+- An expired override could stay in the stored state when a presence timer and the temporary
+  expiry fell due together. It is now dropped on every change.
+
+### Changed
+
+- Warning logs of failing notifications, templates and vacation lights now carry only the error
+  type, never its text; action errors are cut to 200 characters.
+- CI uses the latest Python 3.14 patch (3.14.2 itself fails one recorder test).
+- Repository links point to `https://github.com/Ryckie/Home-Modes-Advanced-hacs`
+  (the integration is still called Home Modes Advanced).
+
+### Added
+
+- One-click "add to HACS" button, smoke test script, publishing guide, final audit with
+  automated reference checks, and more safety tests (log privacy, Alarmo code, echo guard).
+- The icon and logo in `brand/` are **placeholders** and will be replaced before 1.0.
+
 ## [0.9.0] - 2026-11-12
 
 First public beta. Fully local, no external Python dependencies.

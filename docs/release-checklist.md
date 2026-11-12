@@ -2,7 +2,7 @@
 
 ## Recommended first release
 
-Tag **v0.9.0** and publish it as a **pre-release** (beta). Move to **1.0.0** only after the
+Tag **v0.9.1** and publish it as a **pre-release** (beta). Move to **1.0.0** only after the
 "must test before 1.0" items below have been done on real hardware and the feedback from the
 community thread has been handled.
 
@@ -28,7 +28,7 @@ Tag format: `vMAJOR.MINOR.PATCH` or `vMAJOR.MINOR.PATCH-suffix`. Run
 - [ ] Repository is public, has a description and topics (`home-assistant`, `hacs`,
       `home-assistant-custom-component`, `integration`) and Issues enabled (HACS checks this).
 - [ ] **Security → Private vulnerability reporting** enabled (SECURITY.md relies on it).
-- [ ] **v0.9.0 ships with the brand placeholders** (grey boxes marked "PLACEHOLDER"); replace them
+- [ ] **v0.9.1 ships with the brand placeholders** (grey boxes marked "PLACEHOLDER"); replace them
       in `custom_components/home_modes/brand/` before 1.0 (see below).
 - [ ] Add real screenshots under `docs/images/` and remove the placeholder note in the README.
 - [ ] Run the GitHub workflows once on `main` and fix whatever they report (they could not be
@@ -56,7 +56,7 @@ HACS requires at least `icon.png`.
 Do these on a real instance and note the result in the release PR.
 
 - [ ] **HACS pre-release display:** add the repository as a custom repository and check which
-      version HACS offers for the v0.9.0 pre-release (UNVERIFIED how pre-releases are shown).
+      version HACS offers for the v0.9.1 pre-release (UNVERIFIED how pre-releases are shown).
 - [ ] **Marketplace on 2026.11:** install through Settings → Marketplace (UNVERIFIED).
 - [ ] **Fresh install** on 2026.10.4 and on 2026.11.x: add the integration, both presets.
 - [ ] **Real Alarmo** with the steps in [real-alarmo-test.md](real-alarmo-test.md): arm and

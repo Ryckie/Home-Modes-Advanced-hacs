@@ -12,7 +12,7 @@
  * All text that comes from the server (role names) is written with textContent or
  * setAttribute, never with innerHTML.
  */
-const HM_VERSION = "0.9.0";
+const HM_VERSION = "0.9.1";
 const DOMAIN = "home_modes";
 const WS_ALLOWED = "home_modes/allowed_roles";
 const ICON_RE = /^[a-z0-9_-]+:[a-z0-9_-]+$/i;

@@ -73,12 +73,12 @@ Details of the inputs: [blueprints.md](blueprints.md). The Marketplace and HACS 
 
 | Blueprint | What it does | Import |
 |---|---|---|
-| Lights off at night | Turns lights off when the Night role becomes active; optional guard while a guest overlay is on. | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Flights_off_at_night.yaml) |
-| Heating setback in away and vacation | Lowers thermostats while Away or Vacation is active, restores the normal temperature when both end. | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fheating_setback_away_vacation.yaml) |
-| Notify on vacation or guest | Runs your own notify action when Vacation starts or the Guest overlay turns on. | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fnotify_vacation_or_guest.yaml) |
+| Lights off at night | Turns lights off when the Night role becomes active; optional guard while a guest overlay is on. | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced-hacs%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Flights_off_at_night.yaml) |
+| Heating setback in away and vacation | Lowers thermostats while Away or Vacation is active, restores the normal temperature when both end. | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced-hacs%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fheating_setback_away_vacation.yaml) |
+| Notify on vacation or guest | Runs your own notify action when Vacation starts or the Guest overlay turns on. | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced-hacs%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fnotify_vacation_or_guest.yaml) |
 
 Manual import: Settings → Automations & scenes → Blueprints → Import blueprint, then paste the
-GitHub URL of the file (`https://github.com/Ryckie/Home-Modes-Advanced/blob/main/blueprints/automation/home_modes/<file>`). Or copy the file into
+GitHub URL of the file (`https://github.com/Ryckie/Home-Modes-Advanced-hacs/blob/main/blueprints/automation/home_modes/<file>`). Or copy the file into
 `<config>/blueprints/automation/home_modes/`. All three use the role binary sensors, so renaming a
 mode does not break them. Every blueprint needs Home Assistant 2026.10.4 or newer.
 

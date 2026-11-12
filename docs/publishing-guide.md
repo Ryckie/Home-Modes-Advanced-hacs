@@ -1,26 +1,26 @@
 # Publishing guide (for a first-time GitHub publisher)
 
-Goal: publish this project as the public repository **Home-Modes-Advanced** and release
-**v0.9.0** as a pre-release. Parts marked **UNVERIFIED** could not be checked in the
+Goal: publish this project as the public repository **Home-Modes-Advanced-hacs** and release
+**v0.9.1** as a pre-release. Parts marked **UNVERIFIED** could not be checked in the
 development environment (no GitHub account was available); follow them and tell me what differs.
 
 ## 1. Create the repository
 
 1. Sign in on github.com → **+** (top right) → **New repository**.
-2. Owner: your account `Ryckie` (the links in the project use this name). Name: `Home-Modes-Advanced`.
+2. Owner: your account `Ryckie` (the links in the project use this name). Name: `Home-Modes-Advanced-hacs` (the name used in every link of the project).
 3. Public. **Do not** tick "Add a README", ".gitignore" or "license" (the project already has them).
 4. Create repository. Leave the page open; it shows the repository URL.
 
 ## 2. Push the files
 
-Unzip `Home-Modes-Advanced-v0.9.0.zip` (it contains the folder `Home-Modes-Advanced`). In a terminal:
+Unzip `Home-Modes-Advanced-v0.9.1.zip` (it contains the folder `Home-Modes-Advanced`). In a terminal:
 
 ```bash
 cd Home-Modes-Advanced
 git init -b main
 git add .
-git commit -m "Home Modes Advanced 0.9.0"
-git remote add origin https://github.com/Ryckie/Home-Modes-Advanced.git
+git commit -m "Home Modes Advanced 0.9.1"
+git remote add origin https://github.com/Ryckie/Home-Modes-Advanced-hacs.git
 git push -u origin main
 ```
 
@@ -79,21 +79,21 @@ Settings → Actions → General:
 
 Run the same commands locally (see `CONTRIBUTING.md`) and read the first error.
 
-## 5. Create the v0.9.0 pre-release
+## 5. Create the v0.9.1 pre-release
 
-Before tagging: the manifest version is `0.9.0`, `CHANGELOG.md` has `## [0.9.0]`, and the Validate and Tests runs on `main` are green.
+Before tagging: the manifest version is `0.9.1`, `CHANGELOG.md` has `## [0.9.1]`, and the Validate and Tests runs on `main` are green.
 
 ### Option A: automatic, with `release.yml`
 
 ```bash
-git tag v0.9.0
-git push origin v0.9.0
+git tag v0.9.1
+git push origin v0.9.1
 ```
 
 The **Release** workflow runs hassfest, HACS validation and the tests, checks the tag against the
 manifest (`.github/scripts/release_info.py`), then creates the GitHub release with the changelog
 text. Because the version is below 1.0.0 it is marked **Pre-release**. Check: repository main page →
-**Releases** on the right → v0.9.0 shows a "Pre-release" badge.
+**Releases** on the right → v0.9.1 shows a "Pre-release" badge.
 
 If the release step fails with a permissions error: Settings → Actions → General → Workflow
 permissions → "Read and write permissions", then re-run the failed job (UNVERIFIED whether this is needed;
@@ -103,8 +103,8 @@ the workflow requests `contents: write` itself).
 
 1. Create the tag as above (or let GitHub create it in the next step).
 2. Repository → **Releases** → **Draft a new release**.
-3. Choose tag `v0.9.0` (target `main`), title `v0.9.0`.
-4. Paste the `## [0.9.0]` section of `CHANGELOG.md` as the description.
+3. Choose tag `v0.9.1` (target `main`), title `v0.9.1`.
+4. Paste the `## [0.9.1]` section of `CHANGELOG.md` as the description.
 5. Tick **Set as a pre-release**. Publish release.
 
 Do not tick "Set as the latest release" for a beta if you can avoid it (UNVERIFIED how this
@@ -113,8 +113,8 @@ interacts with HACS version selection).
 ## 6. Install it as a custom repository
 
 **HACS (Home Assistant 2026.10.x and older than 2026.11):**
-HACS → ⋮ → Custom repositories → repository `https://github.com/Ryckie/Home-Modes-Advanced`,
-category **Integration** → Add. Open it → enable **Show beta versions** if v0.9.0 is not offered →
+HACS → ⋮ → Custom repositories → repository `https://github.com/Ryckie/Home-Modes-Advanced-hacs`,
+category **Integration** → Add. Open it → enable **Show beta versions** if v0.9.1 is not offered →
 Download. Restart Home Assistant. (Whether HACS lists a pre-release without "Show beta
 versions" is UNVERIFIED; the README says to enable it.)
 
@@ -124,6 +124,17 @@ format and `hacs.json`. The exact screens and how pre-releases are shown were **
 (UNVERIFIED). If you cannot find "add custom repository", look in the Marketplace menu and tell me what it is called.
 
 Then follow [smoke-test.md](smoke-test.md).
+
+### One-click add button
+
+[![Open your Home Assistant instance and add this repository to HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Ryckie&repository=Home-Modes-Advanced-hacs&category=integration)
+
+Anyone can use this button (you, or users of the community post). It opens the user's own
+Home Assistant through my.home-assistant.io at the HACS page of `Ryckie/Home-Modes-Advanced-hacs`
+with category Integration. Steps for the user: click the button → enter their Home Assistant
+address if asked → **Open link** → in HACS choose **Download** → pick v0.9.1 (enable **Show beta versions**
+if it is not listed) → restart Home Assistant → add the integration. If HACS says the repository
+is not found, the repository is not public yet or has no release. UNVERIFIED: the button was not tried.
 
 ## 7. Uninstall
 

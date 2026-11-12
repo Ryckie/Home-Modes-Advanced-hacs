@@ -1,6 +1,6 @@
 # Security and quality review
 
-Scope: version 0.9.0. Everything below was checked against the source in this repository;
+Scope: version 0.9.1. Everything below was checked against the source in this repository;
 the "Proof" column names the test that fails if the behaviour changes. Items that could not
 be verified without a real device or a real Alarmo are listed in
 [release-checklist.md](release-checklist.md).
@@ -147,6 +147,11 @@ is outside this integration.
    re-arm a timer immediately and repeatedly. Fixed by converting to UTC before comparing.
 2. `autorules.py`: a time zone change did not re-arm the schedule timers. Fixed with a
    `EVENT_CORE_CONFIG_UPDATE` listener.
+
+3. `engine.py`: when a presence timer and the temporary-expiry timer fell due together, an expired
+   override could stay in the stored state (harmless to behaviour, but wrong in the sensors and
+   diagnostics), and the test for it failed about one run in five. An expired override is now dropped
+   on every change.
 
 ## 7. What is not covered
 

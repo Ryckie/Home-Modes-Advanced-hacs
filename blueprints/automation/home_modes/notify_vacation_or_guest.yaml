@@ -17,7 +17,7 @@ blueprint:
     automation.
   domain: automation
   author: Ryckie (community integration, not official)
-  source_url: https://github.com/Ryckie/Home-Modes-Advanced/blob/main/blueprints/automation/home_modes/notify_vacation_or_guest.yaml
+  source_url: https://github.com/Ryckie/Home-Modes-Advanced-hacs/blob/main/blueprints/automation/home_modes/notify_vacation_or_guest.yaml
   homeassistant:
     min_version: 2026.10.4
   input:

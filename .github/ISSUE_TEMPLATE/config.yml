@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security problem (private)
-    url: https://github.com/Ryckie/Home-Modes-Advanced/security/advisories/new
+    url: https://github.com/Ryckie/Home-Modes-Advanced-hacs/security/advisories/new
     about: Report vulnerabilities privately, not in a public issue.
   - name: Question or idea
     url: https://community.home-assistant.io/t/wth-why-is-there-no-home-modes/1033966

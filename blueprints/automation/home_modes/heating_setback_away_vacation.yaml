@@ -14,7 +14,7 @@ blueprint:
     it in heat mode.
   domain: automation
   author: Ryckie (community integration, not official)
-  source_url: https://github.com/Ryckie/Home-Modes-Advanced/blob/main/blueprints/automation/home_modes/heating_setback_away_vacation.yaml
+  source_url: https://github.com/Ryckie/Home-Modes-Advanced-hacs/blob/main/blueprints/automation/home_modes/heating_setback_away_vacation.yaml
   homeassistant:
     min_version: 2026.10.4
   input:

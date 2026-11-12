@@ -5,7 +5,7 @@ folder inside the integration. Local images take priority over the brands CDN an
 by Home Assistant at `/api/brands/integration/home_modes/<file>`. HACS requires at least `icon.png`.
 
 **The files in the repository are placeholders** (grey boxes marked "PLACEHOLDER / REPLACE ME").
-They ship with the v0.9.0 beta as placeholders and **must be replaced before 1.0**. Do not use Home Assistant branded images.
+They ship with the v0.9.1 beta as placeholders and **must be replaced before 1.0**. Do not use Home Assistant branded images.
 
 | File | Required size | Status in the repo |
 |---|---|---|

@@ -49,7 +49,7 @@ def test_release_script_accepts_the_matching_tag_and_rejects_others(tmp_path: Pa
     )
     assert ok.returncode == 0, ok.stderr
     assert "prerelease=true" in ok.stdout  # 0.x is a pre-release
-    assert "First public beta" in notes.read_text()
+    assert "### Fixed" in notes.read_text()
     bad = subprocess.run(
         [sys.executable, "-I", str(script), "v9.9.9"],
         cwd=ROOT,

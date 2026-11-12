@@ -7,7 +7,7 @@ time and sensors, manual overrides, and server-side permissions for guests.
 > **Community integration.** This is an independent, community-built custom integration. It is
 > not made, endorsed or supported by Nabu Casa or the Home Assistant project.
 
-> **Beta (0.9.0).** The icon and logo are **placeholders** and will be replaced before 1.0.
+> **Beta (0.9.1).** The icon and logo are **placeholders** and will be replaced before 1.0.
 > Tested with automated tests only. Not yet tested with a real Alarmo, on real
 > iOS and Android devices, or on a Raspberry Pi. See [Status](#status).
 
@@ -41,8 +41,12 @@ This integration is one attempt at the shape of that feature, built on public AP
 - **Home Assistant 2026.11 and newer:** Settings → Marketplace, add this repository (the
   Marketplace uses the same catalog format and `hacs.json` as HACS). _Not yet verified on a real
   2026.11 instance._
-- **Older versions (2026.10.4 and newer):** HACS → three-dot menu → Custom repositories →
-  add `https://github.com/Ryckie/Home-Modes-Advanced`, category **Integration**.
+- **Older versions (2026.10.4 and newer):** use HACS.
+  One click: [![Open your Home Assistant instance and add this repository to HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Ryckie&repository=Home-Modes-Advanced-hacs&category=integration)
+  This opens *your* Home Assistant (my.home-assistant.io asks for its address once) on the
+  HACS page of this repository. If the button does not work, add it by hand: HACS → three-dot
+  menu → Custom repositories → repository `https://github.com/Ryckie/Home-Modes-Advanced-hacs`,
+  category **Integration**. The button's behaviour is **UNVERIFIED** (not tried on a real instance).
 - **Pre-releases:** this is a beta published as a GitHub pre-release.
   HACS: enable "Show beta versions" to see pre-releases.
   Marketplace: verify how pre-releases are shown (**UNVERIFIED**: not confirmed from the
@@ -79,9 +83,9 @@ _Placeholders: screenshots will be added from a real installation, not mock-ups.
 
 | Blueprint | Import |
 |---|---|
-| Lights off at night | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Flights_off_at_night.yaml) |
-| Heating setback in away and vacation | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fheating_setback_away_vacation.yaml) |
-| Notify on vacation or guest | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fnotify_vacation_or_guest.yaml) |
+| Lights off at night | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced-hacs%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Flights_off_at_night.yaml) |
+| Heating setback in away and vacation | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced-hacs%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fheating_setback_away_vacation.yaml) |
+| Notify on vacation or guest | [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRyckie%2FHome-Modes-Advanced-hacs%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fhome_modes%2Fnotify_vacation_or_guest.yaml) |
 
 ## Notifications and privacy
 
