@@ -75,25 +75,6 @@ def test_brand_images_have_the_documented_sizes() -> None:
         assert low <= min(_png_size(brand / name)) <= high, name
 
 
-def test_repo_layout_doc_matches_the_tree() -> None:
-    """Every module, workflow, blueprint and top-level file is listed, and nothing else."""
-    doc = (ROOT / "docs" / "repo-layout.md").read_text()
-    expected = [
-        *(p.name for p in INTEGRATION.glob("*.py")),
-        *(p.name for p in (INTEGRATION / "brand").glob("*.png")),
-        *(p.name for p in (ROOT / "blueprints" / "automation" / "home_modes").glob("*.yaml")),
-        *(p.name for p in (ROOT / ".github" / "workflows").glob("*.yml")),
-        *(p.name for p in (ROOT / ".github" / "ISSUE_TEMPLATE").glob("*.yml")),
-        *(p.name for p in ROOT.iterdir() if p.is_file() and not p.name.startswith(".")),
-    ]
-    for name in expected:
-        assert name in doc, f"{name} missing from docs/repo-layout.md"
-    # every file name in the listing's first block exists
-    listed = re.findall(r"^  ([a-z_]+\.py)\s", doc, flags=re.M)
-    for name in listed:
-        assert (INTEGRATION / name).exists(), f"{name} listed but missing"
-
-
 def test_every_doc_is_linked_from_the_readme() -> None:
     """Each markdown file in docs/ is reachable from the README."""
     readme = (ROOT / "README.md").read_text()

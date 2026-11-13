@@ -72,14 +72,6 @@ Blueprints are not installed by the Marketplace or HACS; import them with the bu
 Everything else is off until you turn it on: notifications, Alarmo bridge, vacation simulation,
 the mirror and enter/exit actions.
 
-## Screenshots
-
-_Placeholders: screenshots will be added from a real installation, not mock-ups._
-
-- `docs/images/card-full.png`: the Home Modes card (light and dark theme)
-- `docs/images/card-guest.png`: the guest card on a phone
-- `docs/images/import-preview.png`: the input_select import preview
-
 ## Blueprints
 
 | Blueprint | Import |
@@ -126,20 +118,19 @@ Report vulnerabilities privately: [SECURITY.md](SECURITY.md).
 
 | Area | Status |
 |---|---|
-| Automated tests (pytest, both Home Assistant versions below, about 325 tests) | passing locally |
+| Automated tests (pytest, both Home Assistant versions below, about 330 tests) | passing locally |
 | Home Assistant 2026.10.4 | primary target, required in CI |
 | Home Assistant 2026.11.x | best effort in CI |
 | DST, time zone change and clock-jump behaviour | covered by tests |
 | Load / unload / reload, upgrade and removal | covered by tests |
 | Card logic (browserless checks) | covered; visual rendering **not** checked on real devices |
-| Alarmo bridge | tested against a fake Alarmo that follows its documented interface; **not** tested with a real Alarmo |
+| Alarmo bridge | automated tests against a fake Alarmo, plus one run on a real Home Assistant 2026.11.1 with Alarmo |
 | iOS and Android Companion apps (notification fields, widgets, shortcuts) | **not tested** |
 | Marketplace install on 2026.11 and HACS pre-release display | **not tested** |
 | Raspberry Pi performance | **not measured** |
-| GitHub workflows | written, not yet run on GitHub |
+| GitHub workflows | running on every push |
 
-Details and the full list of open items: [security-and-quality.md](docs/security-and-quality.md)
-and [release-checklist.md](docs/release-checklist.md).
+Report what you find on real setups in an issue; see [Support](#support-and-contributing).
 
 ## Documentation
 
@@ -151,26 +142,13 @@ and [release-checklist.md](docs/release-checklist.md).
 - [Priority and override rules](docs/priority-and-overrides.md)
 - [Configuration, services and events](docs/configuration.md)
 - [Copy-paste examples and blueprints](docs/examples.md)
-- [Why integration_type is service](docs/integration-type.md)
 - [Alarmo bridge and the Ring Keypad blueprint](docs/alarmo-and-ring-blueprint.md)
 - [Notifications](docs/notifications.md)
 - [Vacation simulation](docs/vacation-simulation.md)
 - [History log](docs/history.md)
 - [Debug logging](docs/debug-logging.md)
 - [Translations](docs/translations.md)
-- [Security and quality review](docs/security-and-quality.md)
-- [Testing with a real Alarmo](docs/real-alarmo-test.md)
-- [Manual test checklist](docs/manual-test-checklist.md)
-- [Real-instance test results (Nov 2026)](docs/real-instance-test-2026-11.md)
-- [Release checklist](docs/release-checklist.md)
-- [Smoke test (10 minutes)](docs/smoke-test.md)
-- [Publishing guide](docs/publishing-guide.md)
-- [Final audit against the brief](docs/final-audit.md)
-- [Brand images](docs/brand-images.md)
 - [Blueprints](docs/blueprints.md)
-- [Research: the new trigger platform](docs/research-new-trigger-platform.md)
-- [Community post draft](docs/community-post-draft.md)
-- [Repository layout](docs/repo-layout.md)
 
 ## Support and contributing
 

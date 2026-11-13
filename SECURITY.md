@@ -19,7 +19,6 @@ Only the latest release receives fixes.
 
 ## What this integration does and does not protect
 
-See [docs/security-and-quality.md](docs/security-and-quality.md) and the "Security notes" in the
-README. In short: permissions are enforced on the server for modes and overlays, but Home
+See the "Security notes" in the README. In short: permissions are enforced on the server for modes and overlays, but Home
 Assistant has no per-service permissions for non-admin users, so guest accounts are not a
 security boundary.

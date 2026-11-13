@@ -95,9 +95,8 @@ lists come from the same server command as the card.
 
 ## Known limits
 
-- Without a browser the cards could only be tested in a simulated DOM. See
-  [manual-test-checklist.md](manual-test-checklist.md) for the checks to do on desktop, iOS and
-  Android.
+- The automated card tests run in a simulated DOM; rendering on desktop, iOS and Android is
+  not covered by them.
 - The cards re-read the list of allowed modes when the select's options change, when the page
   becomes visible again, and on first load. If an administrator changes permissions while a
   page is open, the page shows the new list after the next such moment (or a reload).

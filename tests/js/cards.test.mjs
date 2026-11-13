@@ -1,5 +1,5 @@
-// Browserless checks of the cards with jsdom. They do not replace a test in a real browser
-// (see docs/manual-test-checklist.md): jsdom has no layout, no Home Assistant elements
+// Browserless checks of the cards with jsdom. They do not replace a test in a real browser:
+// jsdom has no layout, no Home Assistant elements
 // (ha-card, ha-icon, ha-form) and no touch input.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";

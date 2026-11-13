@@ -172,8 +172,8 @@ and never answers an Alarmo change, so the two cannot keep each other going.
    change, and Alarmo changes are never answered).
 7. **One Alarmo entity.** With several Alarmo areas, pick the entity (usually the master); the
    bridge follows exactly one.
-8. **Alarmo behaviour is read from source** (1.10.19), not from a running installation; see
-   [real-alarmo-test.md](real-alarmo-test.md) to verify on a real setup.
+8. **Alarmo behaviour is read from source** (1.10.19), and checked once on a real
+   Home Assistant 2026.11.1 with Alarmo.
 
 ## Without the blueprint
 
