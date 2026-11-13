@@ -247,20 +247,31 @@ async def test_notify_screens(hass: HomeAssistant, freezer) -> None:
     entry = await setup_entry(hass, freezer)
     flow_id, result = await _open(hass, entry, "notify")
     assert result["menu_options"] == ["notify_add", "notify_settings", "integrations"]
+    # Back from the event picker adds nothing.
+    await _menu(hass, flow_id, "notify_add")
+    result = await _form(hass, flow_id, {"event": "back"})
+    assert result["step_id"] == "notify"
+    # The mode field is only asked for "mode changed to".
     await _menu(hass, flow_id, "notify_add")
     result = await _form(hass, flow_id, {"event": "any_change"})
+    assert result["step_id"] == "notify_add_details"
+    assert "role" not in {str(k) for k in result["data_schema"].schema}
+    result = await _form(hass, flow_id, {})
     assert result["errors"] == {"targets": "no_target"}
+    # Closing the dialog is the way out of a form; nothing was added.
+    hass.config_entries.options.async_abort(flow_id)
+    flow_id, _ = await _open(hass, entry, "notify")
+    await _menu(hass, flow_id, "notify_add")
+    result = await _form(hass, flow_id, {"event": "changed_to"})
+    assert "role" in {str(k) for k in result["data_schema"].schema}
     result = await _form(
-        hass,
-        flow_id,
-        {"event": "changed_to", "services": ["mobile_app_x"], "message": "{{ to_mode"},
+        hass, flow_id, {"role": "away", "services": ["mobile_app_x"], "message": "{{ to_mode"}
     )
-    assert result["errors"] == {"role": "role_required", "message": "template_invalid"}
+    assert result["errors"] == {"message": "template_invalid"}
     result = await _form(
         hass,
         flow_id,
         {
-            "event": "changed_to",
             "role": "away",
             "services": ["mobile_app_x"],
             "targets": ["notify.phone"],
@@ -270,7 +281,8 @@ async def test_notify_screens(hass: HomeAssistant, freezer) -> None:
     assert result["type"] is FlowResultType.MENU
     assert "notify_remove" in result["menu_options"]
     await _menu(hass, flow_id, "notify_add")
-    await _form(hass, flow_id, {"event": "denied", "services": ["mobile_app_x"]})
+    await _form(hass, flow_id, {"event": "denied"})
+    await _form(hass, flow_id, {"services": ["mobile_app_x"]})
     await _menu(hass, flow_id, "notify_settings")
     await _form(hass, flow_id, {"rate_limit_s": 30})
     await _menu(hass, flow_id, "notify_remove")

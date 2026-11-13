@@ -22,20 +22,22 @@
           "move_role": "Change the order of modes",
           "add_custom": "Add a custom mode",
           "remove_custom": "Remove a custom mode",
-          "save": "Save and close",
+          "save": "Done",
           "presence": "Presence and away timers",
           "night": "Night methods",
           "morning": "Morning methods",
           "override": "Manual override",
           "user_rules": "User permissions (guests)",
           "integrations": "Integrations: actions, Alarmo, vacation, notifications, history"
-        }
+        },
+        "description": "Every screen is saved as soon as you submit it, so you can close this dialog at any time without losing anything."
       },
       "edit_role": {
         "title": "Choose a mode",
         "data": {
           "role": "Mode"
-        }
+        },
+        "description": "Pick the mode to rename, enable or disable. Pick « Back » to return without changes."
       },
       "edit_details": {
         "title": "Edit {role}",
@@ -53,19 +55,22 @@
         "data": {
           "role": "Mode",
           "direction": "Move"
-        }
+        },
+        "description": "Current order: {order}. Pick « Back » to return without changes."
       },
       "add_custom": {
         "title": "Add a custom mode",
         "data": {
           "name": "Name"
-        }
+        },
+        "description": "Leave the name empty to go back without adding a mode."
       },
       "remove_custom": {
         "title": "Remove a custom mode",
         "data": {
           "role": "Custom mode"
-        }
+        },
+        "description": "The mode and its entities are removed. Pick « Back » to return without changes."
       },
       "presence": {
         "title": "Presence",
@@ -82,24 +87,37 @@
       },
       "night": {
         "title": "Night methods",
-        "description": "Choose any combination. Time window is a schedule rule; sleep sensors and phone charging are sensor rules. Phone charging only counts inside the time window.",
+        "description": "Choose any combination, or only 'Manual only' to never switch to Night automatically. Time window is a schedule rule; sleep sensors and phone charging are sensor rules. Phone charging only counts inside the time window.",
         "data": {
           "methods": "Methods",
           "start": "Window start",
           "end": "Window end",
           "sleep_sensors": "Sleep sensors",
           "charging_sensors": "Phone charging sensors"
+        },
+        "data_description": {
+          "methods": "'Manual only' cannot be combined with other methods.",
+          "start": "Used by the time window and phone charging, and as the end of the morning motion window.",
+          "sleep_sensors": "Only used by the sleep sensors method. Binary sensors or input booleans that turn on when someone goes to sleep (for example bed occupancy or a sleep-mode toggle).",
+          "charging_sensors": "Only used by the phone charging method. Lists charging binary sensors and Companion app sensors (pick the Battery state sensor of a phone)."
         }
       },
       "morning": {
         "title": "Morning methods",
-        "description": "Choose any combination. Time is a schedule rule; motion and alarm are sensor rules. Motion only counts from the earliest time until the night window starts.",
+        "description": "Choose any combination, or only 'Manual only' to never leave Night automatically. Time is a schedule rule; motion and alarm are sensor rules. Motion only counts from the earliest time until the night window starts.",
         "data": {
           "methods": "Methods",
           "time": "Morning time",
           "earliest": "Earliest time for motion",
           "motion_sensors": "Motion sensors",
           "alarm_sensors": "Next alarm sensors"
+        },
+        "data_description": {
+          "methods": "'Manual only' cannot be combined with other methods.",
+          "time": "Only used by the time method.",
+          "earliest": "Only used by the motion method.",
+          "motion_sensors": "Only used by the motion method. Lists motion, occupancy and presence sensors.",
+          "alarm_sensors": "Only used by the next alarm method. Timestamp sensors such as the Companion app Next alarm sensor."
         }
       },
       "override": {
@@ -115,11 +133,9 @@
       },
       "user_rules": {
         "title": "User permissions",
-        "description": "Admins are always unrestricted. Users who are not listed are unrestricted. An allow-list user can only set the modes selected below.",
+        "description": "Pick the user whose rule you want to change. Administrators are always unrestricted and are not listed ({count} users can get a rule). Users without a rule are unrestricted. Pick « Back » to return without changes.",
         "data": {
-          "user": "User",
-          "mode": "Rule",
-          "roles": "Allowed modes"
+          "user": "User"
         }
       },
       "integrations": {
@@ -136,7 +152,7 @@
       },
       "actions": {
         "title": "Enter and exit actions",
-        "description": "Pick the mode (or overlay) whose actions you want to edit. Every action runs as its own script with the timeout below; a failing or slow action never blocks the mode change.",
+        "description": "Pick the mode (or overlay) whose actions you want to edit. Only enabled modes are listed. Every action runs as its own script with the timeout below; a failing or slow action never blocks the mode change. The timeout is saved either way. Pick « Back » to return without changes.",
         "data": {
           "role": "Mode",
           "actions_timeout_s": "Timeout per action"
@@ -165,8 +181,8 @@
         }
       },
       "alarmo_map": {
-        "title": "Alarmo state: {state}",
-        "description": "Map this Alarmo state to a Home Modes mode.",
+        "title": "Alarmo state {step}/{total}: {state}",
+        "description": "Map this Alarmo state to a Home Modes mode. Leave the mode empty and the switches off to not map it. Each screen is saved when you submit it.",
         "data": {
           "role": "Mode",
           "to_alarmo": "Mode change sets this Alarmo state",
@@ -174,7 +190,7 @@
         }
       },
       "alarmo_map_disarmed": {
-        "title": "Alarmo state: {state}",
+        "title": "Alarmo state {step}/{total}: {state}",
         "description": "WARNING: switching to this mode would DISARM your alarm. This never happens unless 'Allow disarming Alarmo' is on, is never done for allow-list users, and never for automatic changes unless they are enabled on the previous screen. Leave it off unless you fully understand the risk.",
         "data": {
           "role": "Mode",
@@ -213,21 +229,17 @@
       },
       "notify_add": {
         "title": "Add a notification rule",
-        "description": "Templates may use: from_role, to_role (role ids, stable), from_name, to_name, role_name (display names), role, source, rule, user, time. from_mode and to_mode are aliases of the ids; 'from' is reserved in Jinja and not available. Mobile app targets use the channels HM_ModeChanges, HM_Alerts and HM_Guests.",
+        "description": "When should the notification be sent?",
         "data": {
-          "event": "Event",
-          "role": "Mode (for 'mode changed to')",
-          "targets": "Notify entities",
-          "services": "Notify services (e.g. mobile_app_phone)",
-          "message": "Message template",
-          "title": "Title template"
+          "event": "Event"
         }
       },
       "notify_remove": {
         "title": "Remove a rule",
         "data": {
           "rule": "Rule"
-        }
+        },
+        "description": "Pick the rule to remove. Pick « Back » to return without changes."
       },
       "notify_settings": {
         "title": "Duplicate rate limit",
@@ -244,7 +256,7 @@
       },
       "import_input_select": {
         "title": "Import from input_select",
-        "description": "Choose the input_select that holds your old house mode. Nothing is written yet; the next steps only show suggestions and a preview.",
+        "description": "Choose the input_select that holds your old house mode. Nothing is written yet; the next steps only show suggestions and a preview. Leave it empty to go back.",
         "data": {
           "entity_id": "Input select"
         }
@@ -259,9 +271,31 @@
       },
       "import_confirm": {
         "title": "Preview",
-        "description": "**{entity_id}** will be imported as follows:\n\n{preview}\n\nMirror to old input_select: **{mirror}**. Mirror overlays: **{mirror_overlays}**\n\nAutomations, scripts and helpers that reference it (read-only, nothing is changed):\n\n{usage}\n\nSuggested replacement for one condition:\n\n{example}\n\n**Confirming saves only this import and ends this options session.** Any other change you made in this session and did not save yet is discarded; make those changes again afterwards. Your automations, helpers and YAML are never edited. Use the `home_modes.import_input_select` action for all replacement snippets.",
+        "description": "**{entity_id}** will be imported as follows:\n\n{preview}\n\nMirror to old input_select: **{mirror}**. Mirror overlays: **{mirror_overlays}**\n\nAutomations, scripts and helpers that reference it (read-only, nothing is changed):\n\n{usage}\n\nSuggested replacement for one condition:\n\n{example}\n\nConfirming saves the import right away; leaving it off goes back without importing. Your automations, helpers and YAML are never edited. Use the `home_modes.import_input_select` action for all replacement snippets.",
         "data": {
           "confirm": "Apply and save"
+        }
+      },
+      "user_rule_edit": {
+        "title": "Permissions of {user}",
+        "description": "An allow-list user (for example a guest) can only set the modes selected below. Allowed modes are ignored for unrestricted users.",
+        "data": {
+          "mode": "Rule",
+          "roles": "Allowed modes"
+        }
+      },
+      "notify_add_details": {
+        "title": "Add a notification rule",
+        "description": "Templates may use: from_role, to_role (role ids, stable), from_name, to_name, role_name (display names), role, source, rule, user, time. from_mode and to_mode are aliases of the ids; 'from' is reserved in Jinja and not available. Mobile app targets use the channels HM_ModeChanges, HM_Alerts and HM_Guests.",
+        "data": {
+          "role": "Mode",
+          "targets": "Notify entities",
+          "services": "Notify services (e.g. mobile_app_phone)",
+          "message": "Message template",
+          "title": "Title template"
+        },
+        "data_description": {
+          "targets": "Pick at least one notify entity or service."
         }
       }
     },
@@ -282,7 +316,8 @@
       "no_target": "Pick at least one notify entity or service.",
       "template_invalid": "This template is not valid.",
       "input_select_empty": "This input_select does not exist or has no options.",
-      "import_invalid": "This mapping cannot be applied: {problems}"
+      "import_invalid": "This mapping cannot be applied: {problems}",
+      "manual_exclusive": "'Manual only' cannot be combined with other methods."
     }
   },
   "selector": {
@@ -343,6 +378,7 @@
     },
     "notify_event": {
       "options": {
+        "back": "« Back (add nothing)",
         "changed_to": "Mode changed to",
         "any_change": "Any change",
         "denied": "Denied attempt",

@@ -232,3 +232,102 @@ async def test_options_remove_last_primary_blocked(hass: HomeAssistant) -> None:
     await _menu(hass, flow_id, "remove_custom")
     result = await hass.config_entries.options.async_configure(flow_id, {"role": "custom_1"})
     assert result["errors"] == {"base": "no_primary"}
+
+
+async def test_options_save_on_submit_without_done(hass: HomeAssistant, entry) -> None:
+    """Every submitted screen is saved at once; closing the dialog keeps it."""
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    flow_id = result["flow_id"]
+    await _menu(hass, flow_id, "edit_role")
+    await hass.config_entries.options.async_configure(flow_id, {"role": "night"})
+    await hass.config_entries.options.async_configure(flow_id, {"name": "Sleep", "enabled": True})
+    await _menu(hass, flow_id, "presence")
+    await hass.config_entries.options.async_configure(
+        flow_id, {"persons": [], "away_delay_min": 9, "vacation_after_h": 30}
+    )
+    # Close the dialog instead of picking Done.
+    hass.config_entries.options.async_abort(flow_id)
+    await hass.async_block_till_done()
+    roles = {r["id"]: r for r in entry.options[CONF_ROLES]}
+    assert roles["night"]["name"] == "Sleep"
+    assert entry.options["away_delay_min"] == 9
+    assert "Sleep" in hass.states.get("select.home_mode").attributes["options"]
+
+
+async def test_options_pickers_can_go_back(hass: HomeAssistant, entry) -> None:
+    """Every picker offers Back, preselected, and Back changes nothing."""
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    flow_id = result["flow_id"]
+    await _menu(hass, flow_id, "add_custom")
+    await hass.config_entries.options.async_configure(flow_id, {"name": "Cinema"})
+    before = dict(entry.options)
+    for step, field in (
+        ("edit_role", "role"),
+        ("move_role", "role"),
+        ("remove_custom", "role"),
+        ("user_rules", "user"),
+    ):
+        result = await _menu(hass, flow_id, step)
+        key = next(k for k in result["data_schema"].schema if str(k) == field)
+        assert key.default() == "back"
+        assert result["data_schema"].schema[key].config["options"][0]["value"] == "back"
+        payload = {field: "back"}
+        if step == "move_role":
+            payload["direction"] = "up"
+        result = await hass.config_entries.options.async_configure(flow_id, payload)
+        assert result["type"] is FlowResultType.MENU
+        assert result["step_id"] == "init"
+    # An empty name leaves "add a custom mode" without adding one.
+    await _menu(hass, flow_id, "add_custom")
+    result = await hass.config_entries.options.async_configure(flow_id, {})
+    assert result["step_id"] == "init"
+    # An empty input_select leaves the import.
+    await _menu(hass, flow_id, "integrations")
+    await _menu(hass, flow_id, "import_input_select")
+    result = await hass.config_entries.options.async_configure(flow_id, {})
+    assert result["step_id"] == "integrations"
+    assert dict(entry.options) == before
+
+
+async def test_options_role_lists_only_offer_usable_modes(hass: HomeAssistant, entry) -> None:
+    """Disabled modes are not offered where they cannot do anything."""
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    flow_id = result["flow_id"]
+    await _menu(hass, flow_id, "edit_role")
+    await hass.config_entries.options.async_configure(flow_id, {"role": "dnd"})
+    await hass.config_entries.options.async_configure(
+        flow_id, {"name": "Do not disturb", "enabled": False}
+    )
+    await _menu(hass, flow_id, "integrations")
+    result = await _menu(hass, flow_id, "actions")
+    key = next(k for k in result["data_schema"].schema if str(k) == "role")
+    offered = {o["value"] for o in result["data_schema"].schema[key].config["options"]}
+    assert "dnd" not in offered and "guest" in offered
+    await hass.config_entries.options.async_configure(
+        flow_id, {"role": "back", "actions_timeout_s": 30}
+    )
+    result = await _menu(hass, flow_id, "vacation")
+    key = next(k for k in result["data_schema"].schema if str(k) == "roles")
+    offered = {o["value"] for o in result["data_schema"].schema[key].config["options"]}
+    assert "guest" not in offered and "dnd" not in offered and "vacation" in offered
+
+
+async def test_options_manual_only_is_exclusive(hass: HomeAssistant, entry) -> None:
+    """'Manual only' together with another method is rejected."""
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    flow_id = result["flow_id"]
+    await _menu(hass, flow_id, "night")
+    result = await hass.config_entries.options.async_configure(
+        flow_id, {"methods": ["manual", "time_window"], "start": "22:00:00", "end": "06:00:00"}
+    )
+    assert result["errors"] == {"methods": "manual_exclusive"}
+    result = await hass.config_entries.options.async_configure(
+        flow_id, {"methods": ["manual"], "start": "22:00:00", "end": "06:00:00"}
+    )
+    assert result["type"] is FlowResultType.MENU
+    await _menu(hass, flow_id, "morning")
+    result = await hass.config_entries.options.async_configure(
+        flow_id,
+        {"methods": ["manual", "time"], "time": "07:00:00", "earliest": "05:00:00"},
+    )
+    assert result["errors"] == {"methods": "manual_exclusive"}

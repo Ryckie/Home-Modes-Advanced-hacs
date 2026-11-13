@@ -254,8 +254,8 @@ Companion app specifics
 - [ ] Mirror overlays off (default): turning Guest on does not write anything. Turn the
       option on: Guest writes its option while it is active and the primary's option again
       when it ends.
-- [ ] Confirm the import while another options edit is pending: only the import is saved
-      and the dialog closes (the other edit is discarded, as the description says).
+- [ ] Make another options edit, then confirm the import in the same session: both are
+      saved and the flow returns to the Integrations menu.
 
 ## Diagnostics
 

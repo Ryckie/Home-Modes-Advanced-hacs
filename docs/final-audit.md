@@ -104,7 +104,7 @@ The GitHub workflows and everything on real devices have **not** been run.
 | Suppressed notifications write a history entry | `notify.py` | `test_notify.py::test_suppressed_messages_are_never_silent` | done | |
 | Frontend cards (full and guest), no build, no external requests, visual editors | `frontend/home-modes-cards.js`, `frontend.py` | `test_frontend.py`, `tests/js/cards.test.mjs` | partly | Logic checked with jsdom; real rendering, themes, iOS and Android are **not** tested |
 | `home_modes/allowed_roles` websocket command | `ws.py` | `test_guest_dashboard.py` | done | |
-| Migration helper and optional mirror (with overlay option) | `migration.py`, `mirror.py`, `config_flow.py` | `test_migration.py`, `test_safety_claims.py::test_import_with_a_full_mapping_but_no_confirm_writes_nothing`, `test_mirror.py` | done | Import saves only the import; hard-coded English labels in the import flow |
+| Migration helper and optional mirror (with overlay option) | `migration.py`, `mirror.py`, `config_flow.py` | `test_migration.py`, `test_safety_claims.py::test_import_with_a_full_mapping_but_no_confirm_writes_nothing`, `test_mirror.py` | done | Options are saved per screen, so the import keeps earlier edits; hard-coded English labels in the import flow |
 | Diagnostics with redaction | `diagnostics.py` | `test_diagnostics.py` | done | |
 | Companion app notes | `docs/companion-apps.md` | n/a | partly | Widget and tile support for scripts is UNVERIFIED |
 | Per-role button entities | none | n/a | deviated | Decided no (Step 5 answer 1) |

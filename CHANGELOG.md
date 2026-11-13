@@ -6,6 +6,27 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Options: every screen is saved as soon as it is submitted (the integration reloads), so
+  closing the dialog never loses earlier changes. "Save and close" is now "Done". Confirming
+  an input_select import no longer discards other edits of the same session.
+- Options: every picker (mode, user, rule, notification event) offers "« Back (change
+  nothing)"; an empty custom mode name or input_select also goes back.
+- Options: User permissions is split into picking the user and editing the rule, which now
+  starts from the stored rule. Administrators are no longer listed (they are always
+  unrestricted).
+- Options: a new notification rule asks for the event first; the mode field only appears for
+  "Mode changed to".
+- Options: Alarmo mapping rows are saved one by one, only show the switches that matter for
+  the chosen direction, and the titles show the step (for example 2/6).
+- Options: disabled modes are no longer offered for actions, notifications, vacation
+  simulation and user permissions.
+- Options: entity pickers are filtered: motion sensors (motion, occupancy, presence),
+  charging sensors (charging/plug binary sensors and Companion app sensors) and sleep
+  sensors (binary sensors and input booleans).
+- Options: "Manual only" can no longer be combined with other night or morning methods.
+
 ## [0.9.1] - 2026-11-13
 
 Second beta (pre-release). The first tag to publish; 0.9.0 was never published.
