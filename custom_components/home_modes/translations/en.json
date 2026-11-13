@@ -222,6 +222,7 @@
         "description": "No notification is sent until you add a rule with at least one target.",
         "menu_options": {
           "notify_add": "Add a rule",
+          "notify_test": "Send a test notification",
           "notify_remove": "Remove a rule",
           "notify_settings": "Duplicate rate limit",
           "integrations": "Back"
@@ -232,6 +233,13 @@
         "description": "When should the notification be sent?",
         "data": {
           "event": "Event"
+        }
+      },
+      "notify_test": {
+        "title": "Send a test notification",
+        "description": "Pick a rule and press Submit: every target of that rule gets a test message with the rule's channel and priority (the duplicate rate limit does not apply). You stay on this screen to see the result; pick « Back » to leave.\n\n{result}",
+        "data": {
+          "rule": "Rule"
         }
       },
       "notify_remove": {
@@ -286,16 +294,17 @@
       },
       "notify_add_details": {
         "title": "Add a notification rule",
-        "description": "Templates may use: from_role, to_role (role ids, stable), from_name, to_name, role_name (display names), role, source, rule, user, time. from_mode and to_mode are aliases of the ids; 'from' is reserved in Jinja and not available. Mobile app targets use the channels HM_ModeChanges, HM_Alerts and HM_Guests.",
+        "description": "Templates may use: from_role, to_role (role ids, stable), from_name, to_name, role_name (display names), role, source, rule, user, time. from_mode and to_mode are aliases of the ids; 'from' is reserved in Jinja and not available. Phones get the Android channels HM_ModeChanges, HM_Alerts and HM_Guests (iOS: grouped by the same names).\n\n**Two ways to pick a target.** Notify entities are the current Home Assistant style: phones from the Companion app and integrations that already moved over. Notify services are the older style that many integrations still only offer (for example notify groups, Telegram, email). A phone appears in both lists: pick it once, in either list.",
         "data": {
           "role": "Mode",
-          "targets": "Notify entities",
-          "services": "Notify services (e.g. mobile_app_phone)",
+          "targets": "Notify entities (phones and newer integrations)",
+          "services": "Notify services (notify groups and older integrations)",
           "message": "Message template",
           "title": "Title template"
         },
         "data_description": {
-          "targets": "Pick at least one notify entity or service."
+          "targets": "Pick at least one target here or under notify services.",
+          "services": "Only needed for targets that are not in the list above."
         }
       }
     },

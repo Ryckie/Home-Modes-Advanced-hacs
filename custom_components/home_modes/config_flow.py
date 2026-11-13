@@ -757,7 +757,7 @@ class HomeModesOptionsFlow(OptionsFlow):
         """Notification sub-menu."""
         menu = ["notify_add"]
         if parse_integration_settings(self.extra).notify.rules:
-            menu.append("notify_remove")
+            menu.extend(["notify_test", "notify_remove"])
         menu.extend(["notify_settings", "integrations"])
         return self.async_show_menu(step_id="notify", menu_options=menu)
 
@@ -890,6 +890,43 @@ class HomeModesOptionsFlow(OptionsFlow):
             }
         )
         return self.async_show_form(step_id="notify_remove", data_schema=schema)
+
+    async def async_step_notify_test(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Send a test message to the targets of one rule and show the result per target."""
+        from .notify import async_send_test  # imported here: only this screen needs it
+
+        rules = parse_integration_settings(self.extra).notify.rules
+        raw_rules = self._notify_options()["rules"]
+        result = ""
+        choice = BACK
+        if user_input is not None:
+            choice = user_input.get("rule") or BACK
+            if choice == BACK:
+                return await self.async_step_notify()
+            index = int(choice)
+            if 0 <= index < len(rules):
+                lines = []
+                for target, error in await async_send_test(self.hass, rules[index]):
+                    lines.append(f"- {target}: " + (f"failed ({error})" if error else "sent"))
+                result = "**Result**\n" + "\n".join(lines)
+        labels = [SelectOptionDict(value=BACK, label=BACK_LABEL)] + [
+            SelectOptionDict(value=str(i), label=self._rule_label(r))
+            for i, r in enumerate(raw_rules)
+        ]
+        schema = vol.Schema(
+            {
+                vol.Required("rule", default=choice): SelectSelector(
+                    SelectSelectorConfig(options=labels, mode=SelectSelectorMode.LIST)
+                )
+            }
+        )
+        return self.async_show_form(
+            step_id="notify_test",
+            data_schema=schema,
+            description_placeholders={"result": result},
+        )
 
     async def async_step_notify_settings(
         self, user_input: dict[str, Any] | None = None

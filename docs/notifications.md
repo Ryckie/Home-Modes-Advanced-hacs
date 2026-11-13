@@ -31,7 +31,24 @@ specific rule is sent, in this order: `guest_on`, `vacation_entered`, `changed_t
 These entries are visible to administrators only (see [history.md](history.md)). A rate limit of
 0 sends every duplicate, including the ones the precedence would suppress.
 
+## Test a rule
+
+Options → Integrations → Notifications → **Send a test notification**, pick a rule and press
+Submit. Every target of that rule gets a test message with the rule's channel and priority;
+the duplicate rate limit does not apply. The screen shows per target whether it was sent or
+why it failed (for example an unknown service or a phone that is not connected).
+
 ## Targets
+
+The rule screen has two target fields because Home Assistant has two kinds of notify targets:
+
+- **Notify entities** are the current style (`notify.*` entities). Phones from the Companion
+  app and integrations that have moved over show up here. Prefer this field.
+- **Notify services** are the older style (`notify.<name>` actions). Many integrations still
+  only offer this, and notify groups exist only here. Use it for targets that are missing from
+  the entity list.
+
+A phone shows up in both lists. Pick it once: both routes send the same `HM_` channel data.
 
 - **Companion app notify entities** (`notify.<phone>`, from the Mobile App integration): sent
   through that phone's `notify.mobile_app_<device>` service (or `notify.mobile_app` with the

@@ -8,6 +8,9 @@ All notable changes are listed here. The format follows
 
 ### Added
 
+- Options → Notifications → **Send a test notification**: sends a test to every target of a
+  rule (with its channel) and shows per target whether it was sent or why it failed.
+- The rule screen explains the two target fields (notify entities and notify services).
 - Real brand images replace the placeholders: icon, logo and a dark-theme logo
   (`custom_components/home_modes/brand/`), plus a README banner. SVG sources in `docs/images/source/`.
 

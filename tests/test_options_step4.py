@@ -7,6 +7,7 @@ from datetime import timedelta
 from freezegun.api import FrozenDateTimeFactory
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from pytest_homeassistant_custom_component.common import async_mock_service
 
 from custom_components.home_modes.models import Role
 from custom_components.home_modes.settings import parse_integration_settings
@@ -337,3 +338,39 @@ def test_disarm_screen_carries_a_warning() -> None:
     assert "DISARM" in texts["alarmo_map_disarmed"]["description"]
     assert "dangerous" in texts["alarmo_map_disarmed"]["data"]["allow_disarm"]
     assert "No alarm code is ever stored" in texts["alarmo"]["description"]
+
+
+async def test_notify_test_screen(hass: HomeAssistant, freezer) -> None:
+    """A test is sent to every target of the picked rule, with its channel; the result is shown."""
+    sent = async_mock_service(hass, "notify", "mobile_app_x")
+    entry = await setup_entry(
+        hass,
+        freezer,
+        {
+            "notify": {
+                "rules": [
+                    {"event": "denied", "services": ["mobile_app_x", "missing_service"]},
+                ]
+            }
+        },
+    )
+    flow_id, result = await _open(hass, entry, "notify")
+    assert result["menu_options"] == [
+        "notify_add",
+        "notify_test",
+        "notify_remove",
+        "notify_settings",
+        "integrations",
+    ]
+    result = await _menu(hass, flow_id, "notify_test")
+    assert result["step_id"] == "notify_test"
+    assert result["description_placeholders"] == {"result": ""}
+    result = await _form(hass, flow_id, {"rule": "0"})
+    assert result["step_id"] == "notify_test"  # stays, to show the result
+    assert len(sent) == 1
+    assert sent[0].data["data"]["channel"] == "HM_Alerts"
+    shown = result["description_placeholders"]["result"]
+    assert "notify.mobile_app_x: sent" in shown
+    assert "notify.missing_service: failed" in shown
+    result = await _form(hass, flow_id, {"rule": "back"})
+    assert result["step_id"] == "notify"
