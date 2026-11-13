@@ -156,6 +156,8 @@ class AlarmoBridge:
             return  # arming / pending / triggered are transitions, not target states
         if old is not None and old.state == state:
             return  # attribute-only update
+        if self._is_failed_arm(state, new.attributes, now):
+            return
         if self._is_echo(new.context, state, now):
             _LOGGER.debug("Ignoring Alarmo state %s: caused by the bridge itself", state)
             return
@@ -177,6 +179,25 @@ class AlarmoBridge:
                 override=True,
             )
         )
+
+    def _is_failed_arm(self, state: str, attrs: Any, now: datetime) -> bool:
+        """Return True (and report it) if this state is Alarmo undoing our failed arm.
+
+        When open sensors block arming, Alarmo first writes the previous state back and only
+        then fires alarmo_failed_to_arm. That write carries the blocking sensors in
+        "open_sensors"; a person disarming at the panel or keypad clears them. The revert is
+        not a user action, so it must not change the mode.
+        """
+        expected = self._expected
+        if expected is None or now >= expected.expires or state == expected.state:
+            return False
+        open_sensors = attrs.get("open_sensors")
+        if not open_sensors:
+            return False
+        self._expected = None  # the event that follows is then ignored (no double report)
+        count = len(open_sensors) if isinstance(open_sensors, dict | list) else 1
+        self._notes_error(None, ERR_FAILED_TO_ARM, f"open_sensors ({count})")
+        return True
 
     def _is_echo(self, context: Context, state: str, now: datetime) -> bool:
         if context.id in self._own_contexts or context.parent_id in self._own_contexts:

@@ -156,7 +156,8 @@ B. With Alarmo (default arm/disarm without codes for the test; note the exit del
 - [ ] Set mode Away in Home Modes: Alarmo goes to *arming*, then *armed_away* after the exit
       delay; Home Modes stays on Away and does not change again (no echo).
 - [ ] Set Alarmo to armed_night from the Alarmo panel: mode becomes Night, source `alarmo`,
-      override active (`sensor.home_mode_trigger_reason`); a presence change does not undo it.
+      override active (`sensor.home_mode_trigger_reason`). With override *Until set_auto* a
+      presence change does not undo it; with the default *Next auto-rule trigger* it does.
 - [ ] Disarm from the Alarmo panel: mode becomes Home.
 - [ ] Safety: map a mode to `disarmed` with *Allow disarming* **off**: switching to it never
       disarms. Turn it on: it disarms (as admin); as an allow-list guest it still does not.
@@ -164,8 +165,8 @@ B. With Alarmo (default arm/disarm without codes for the test; note the exit del
       Alarmo is not touched. Turn it on: arming follows, disarming still needs the switch.
 - [ ] Trigger the alarm (or set it to *pending*/*triggered* in a test instance): mode changes do
       not interfere.
-- [ ] Open a window sensor, set mode Away: Alarmo refuses; the mode stays Away; a bridge error is
-      recorded.
+- [ ] Open a window sensor, set mode Away: Alarmo refuses (also after an exit delay, when it
+      reverts to disarmed); the mode stays Away; one `failed_to_arm` bridge error is recorded.
 - [ ] Turn on *require code to arm* in Alarmo: the history shows `code_required`, nothing is sent.
 - [ ] Remove or disable Alarmo while the bridge is on: Home Modes keeps working, one bridge error.
 - [ ] With the Ring Keypad blueprint: arm Away and disarm at the keypad. Home Modes follows

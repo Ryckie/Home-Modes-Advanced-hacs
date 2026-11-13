@@ -512,7 +512,9 @@ class ChangeEngine:
 def raise_for_result(result: ChangeResult, role_name: str) -> None:
     """Raise a translated error for denied or rejected results."""
     if result.status is ChangeStatus.DENIED:
-        raise HomeAssistantError(
+        # A refused request is not a server failure: ServiceValidationError gives a 400 and
+        # no "Error during service call" log line (the engine already logs one warning).
+        raise ServiceValidationError(
             translation_domain=DOMAIN,
             translation_key="permission_denied",
             translation_placeholders={"role": role_name},

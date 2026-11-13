@@ -6,6 +6,22 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Alarmo bridge: when Alarmo refuses to arm after its exit delay (open sensors), it puts the
+  previous state back before it reports the failure. Home Modes took that revert as a keypad
+  disarm and switched to the disarmed mode (usually Home) without reporting anything. The
+  revert is now recognised, the mode stays, and one `failed_to_arm` bridge error is recorded.
+- A refused change by an allow-list user is now a validation error (HTTP 400) instead of a
+  server error (HTTP 500), so Home Assistant no longer logs "Error during service call" for
+  every refused tap. The message and the `home_modes_denied` event are unchanged.
+
+### Documentation
+
+- With the default override (*Next auto-rule trigger*), the next automatic trigger also ends
+  an override started at the Alarmo panel or keypad, and the startup evaluation after a restart
+  counts as a trigger. The Alarmo docs and test scripts said otherwise; corrected.
+
 ### Changed
 
 - Options: every screen is saved as soon as it is submitted (the integration reloads), so
