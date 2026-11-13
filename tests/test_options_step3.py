@@ -19,11 +19,11 @@ from custom_components.home_modes.models import (
 )
 from custom_components.home_modes.settings import parse_settings
 
-from .helpers import call, data, primary, setup_entry
+from .helpers import call, data, options_menu, primary, setup_entry
 
 
 async def _step(hass: HomeAssistant, flow_id: str, step: str, payload: dict | None = None):
-    result = await hass.config_entries.options.async_configure(flow_id, {"next_step_id": step})
+    result = await options_menu(hass, flow_id, step)
     if payload is None:
         return result
     return await hass.config_entries.options.async_configure(flow_id, payload)

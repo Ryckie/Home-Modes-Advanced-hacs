@@ -12,11 +12,11 @@ from pytest_homeassistant_custom_component.common import async_mock_service
 from custom_components.home_modes.models import Role
 from custom_components.home_modes.settings import parse_integration_settings
 
-from .helpers import setup_entry
+from .helpers import options_menu, setup_entry
 
 
 async def _menu(hass: HomeAssistant, flow_id: str, step: str):
-    return await hass.config_entries.options.async_configure(flow_id, {"next_step_id": step})
+    return await options_menu(hass, flow_id, step)
 
 
 async def _form(hass: HomeAssistant, flow_id: str, payload: dict):
@@ -49,7 +49,6 @@ async def test_menu_stays_readable(hass: HomeAssistant, freezer: FrozenDateTimeF
         "actions",
         "alarmo",
         "vacation",
-        "notify",
         "history",
         "import_input_select",
         "init",
@@ -247,7 +246,7 @@ async def test_notify_screens(hass: HomeAssistant, freezer) -> None:
     """Rules can be added (validated), listed, removed; the rate limit is configurable."""
     entry = await setup_entry(hass, freezer)
     flow_id, result = await _open(hass, entry, "notify")
-    assert result["menu_options"] == ["notify_add", "notify_settings", "integrations"]
+    assert result["menu_options"] == ["notify_add", "notify_settings", "init"]
     # Back from the event picker adds nothing.
     await _menu(hass, flow_id, "notify_add")
     result = await _form(hass, flow_id, {"event": "back"})
@@ -360,7 +359,7 @@ async def test_notify_test_screen(hass: HomeAssistant, freezer) -> None:
         "notify_test",
         "notify_remove",
         "notify_settings",
-        "integrations",
+        "init",
     ]
     result = await _menu(hass, flow_id, "notify_test")
     assert result["step_id"] == "notify_test"

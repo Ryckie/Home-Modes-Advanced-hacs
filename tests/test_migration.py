@@ -21,7 +21,7 @@ from custom_components.home_modes.migration import (
 )
 from custom_components.home_modes.models import Role
 
-from .helpers import setup_entry
+from .helpers import options_menu, setup_entry
 
 TYPICAL = ["Home", "Night", "Away", "Vacation"]
 EXTRA = [
@@ -273,8 +273,8 @@ async def test_usage_report_is_read_only(
 async def _walk_to_confirm(hass: HomeAssistant, entry, entity: str, mapping: dict, mirror: bool):
     flow_id = (await hass.config_entries.options.async_init(entry.entry_id))["flow_id"]
     configure = hass.config_entries.options.async_configure
-    await configure(flow_id, {"next_step_id": "integrations"})
-    result = await configure(flow_id, {"next_step_id": "import_input_select"})
+    await options_menu(hass, flow_id, "integrations")
+    result = await options_menu(hass, flow_id, "import_input_select")
     assert result["step_id"] == "import_input_select"
     result = await configure(flow_id, {"entity_id": entity})
     assert result["step_id"] == "import_map"
@@ -333,20 +333,20 @@ async def test_options_flow_import_keeps_earlier_edits(
     configure = hass.config_entries.options.async_configure
     flow_id = (await hass.config_entries.options.async_init(entry.entry_id))["flow_id"]
     # Unrelated edit: change the away delay on the presence screen (saved on submit).
-    result = await configure(flow_id, {"next_step_id": "presence"})
+    result = await options_menu(hass, flow_id, "presence")
     assert result["step_id"] == "presence"
     schema_keys = {str(k): k for k in result["data_schema"].schema}
     assert "away_delay_min" in schema_keys
     result = await configure(flow_id, {"persons": [], "away_delay_min": 17, "vacation_after_h": 48})
     assert result["type"] is FlowResultType.MENU
     # Role rename (also saved on submit).
-    result = await configure(flow_id, {"next_step_id": "edit_role"})
+    result = await options_menu(hass, flow_id, "edit_role")
     result = await configure(flow_id, {"role": "night"})
     result = await configure(flow_id, {"name": "Bedtime", "enabled": True})
     assert result["type"] is FlowResultType.MENU
     # Now the import.
-    await configure(flow_id, {"next_step_id": "integrations"})
-    await configure(flow_id, {"next_step_id": "import_input_select"})
+    await options_menu(hass, flow_id, "integrations")
+    await options_menu(hass, flow_id, "import_input_select")
     await configure(flow_id, {"entity_id": entity})
     result = await configure(
         flow_id,
@@ -386,11 +386,11 @@ async def test_options_flow_import_uses_saved_roles_in_the_preview(
     entity = await _input_select(hass, ["Home", "Night"])
     configure = hass.config_entries.options.async_configure
     flow_id = (await hass.config_entries.options.async_init(entry.entry_id))["flow_id"]
-    await configure(flow_id, {"next_step_id": "edit_role"})
+    await options_menu(hass, flow_id, "edit_role")
     await configure(flow_id, {"role": "night"})
     await configure(flow_id, {"name": "Bedtime", "enabled": True})
-    await configure(flow_id, {"next_step_id": "integrations"})
-    await configure(flow_id, {"next_step_id": "import_input_select"})
+    await options_menu(hass, flow_id, "integrations")
+    await options_menu(hass, flow_id, "import_input_select")
     await configure(flow_id, {"entity_id": entity})
     result = await configure(
         flow_id, {"Home": "home", "Night": "night", "mirror_to_old_input_select": False}

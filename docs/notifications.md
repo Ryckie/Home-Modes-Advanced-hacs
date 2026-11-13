@@ -1,6 +1,6 @@
 # Notifications
 
-Nothing is sent until you add a rule with at least one target (Options → Integrations →
+Nothing is sent until you add a rule with at least one target (Configure →
 Notifications → Add a rule). A rule without a target never sends.
 
 ## Events
@@ -33,7 +33,7 @@ These entries are visible to administrators only (see [history.md](history.md)).
 
 ## Test a rule
 
-Options → Integrations → Notifications → **Send a test notification**, pick a rule and press
+Configure → Notifications → **Send a test notification**, pick a rule and press
 Submit. Every target of that rule gets a test message with the rule's channel and priority;
 the duplicate rate limit does not apply. The screen shows per target whether it was sent or
 why it failed (for example an unknown service or a phone that is not connected).

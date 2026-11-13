@@ -60,13 +60,17 @@ Blueprints are not installed by the Marketplace or HACS; import them with the bu
 
 ## Quick start
 
-1. Add the integration and choose the **Simple** preset (Home, Night, Away, Vacation) or **Extended** (adds
-   All home, All away, Guest and Do not disturb). Roles can be turned on later.
-2. Options → **Presence and away timers**: pick the person entities and the away delay.
-3. Options → **Night methods** and **Morning methods**: choose how Night starts and ends.
-4. Add the **Home Modes** card to a dashboard (see [cards](docs/cards.md)), or call
+1. Add the integration. Setup asks three short questions:
+   - **Modes to start with:** Basic (Home, Night, Away, Vacation) or Extended (adds All home,
+     All away, Guest and Do not disturb). You can rename, add or turn off modes later.
+   - **Who lives here?** The people whose phones switch Away and Home. Optional.
+   - **Night and morning:** switch Night by the clock. Optional.
+2. Later, open **Configure** on the integration. The menu shows what is set up and groups the
+   rest: *Modes*, *Automatic switching* (presence, night, morning, manual changes), *Guests and
+   restricted users*, *Notifications* and *More*.
+3. Add the **Home Modes** card to a dashboard (see [cards](docs/cards.md)), or call
    `home_modes.set_mode`.
-5. Use `binary_sensor.home_mode_night` (and the other role sensors) as conditions or triggers in
+4. Use `binary_sensor.home_mode_night` (and the other role sensors) as conditions or triggers in
    your automations, or import a blueprint.
 
 Everything else is off until you turn it on: notifications, Alarmo bridge, vacation simulation,

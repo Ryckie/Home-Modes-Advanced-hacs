@@ -2,7 +2,7 @@
 
 Persistent log of mode changes, denied attempts and system events. Stored in
 `.storage/home_modes.<entry_id>.history` with a delayed save (about 1 s) and written
-immediately when the integration unloads. Default size 500 entries (Options → Integrations →
+immediately when the integration unloads. Default size 500 entries (Configure → More →
 History log, 10–5000); the oldest entries are dropped first.
 
 ## Entry

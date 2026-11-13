@@ -69,7 +69,7 @@ action editor.
   of the change, so traces and the logbook link them to the change.
 - A failing action is logged and recorded in the history entry (`action_failures`); the other
   actions still run and the mode change is never blocked or reverted.
-- Each action has a timeout (default 30 s, options → Integrations → Enter and exit actions). A
+- Each action has a timeout (default 30 s, Configure → More → Run actions when a mode starts or ends). A
   slow action is stopped, reported as a timeout, and the change goes on.
 - Variables available in templates (same names as in notifications): `from_role`, `to_role`
   (role ids), `from_mode`, `to_mode` (aliases, always ids), `from_name`, `to_name`, `role`,

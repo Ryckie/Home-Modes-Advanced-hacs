@@ -106,3 +106,28 @@ def set_state(entry: MockConfigEntry, **fields: Any) -> None:
 
     coordinator = entry.runtime_data.coordinator
     coordinator.async_apply_state(replace(coordinator.data, **fields))
+
+
+# Where each options screen lives in the options menu (anything else is on the main menu).
+OPTIONS_PARENT = {
+    **dict.fromkeys(("edit_role", "move_role", "add_custom", "remove_custom"), "modes"),
+    **dict.fromkeys(("presence", "night", "morning", "override"), "automation"),
+    **dict.fromkeys(
+        ("actions", "alarmo", "vacation", "history", "import_input_select"), "integrations"
+    ),
+    **dict.fromkeys(("notify_add", "notify_test", "notify_remove", "notify_settings"), "notify"),
+}
+
+
+async def options_menu(hass: HomeAssistant, flow_id: str, step: str) -> Any:
+    """Pick an options menu entry, walking through the main menu and submenu when needed."""
+    flows = hass.config_entries.options
+    current = flows.async_get(flow_id)["step_id"]
+    parent = OPTIONS_PARENT.get(step, "init")
+    if step == "init" or current == parent:
+        return await flows.async_configure(flow_id, {"next_step_id": step})
+    if current != "init":
+        await flows.async_configure(flow_id, {"next_step_id": "init"})
+    if parent != "init":
+        await flows.async_configure(flow_id, {"next_step_id": parent})
+    return await flows.async_configure(flow_id, {"next_step_id": step})

@@ -59,7 +59,7 @@ Details from the source:
 
 ## Settings
 
-Options → Integrations → Alarmo bridge.
+Configure → More → Alarmo bridge.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |

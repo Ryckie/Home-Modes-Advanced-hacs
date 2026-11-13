@@ -2,42 +2,82 @@
   "config": {
     "step": {
       "user": {
-        "title": "Home Modes Advanced",
-        "description": "Choose which modes to start with. You can rename, reorder, enable or disable every mode later in the integration options.",
+        "title": "Welcome to Home Modes (1 of 3)",
+        "description": "Home Modes gives your home one mode, such as Home, Night or Away, that automations and dashboards can follow.\n\nPick the modes to start with. You can rename, add or turn off modes later.",
         "data": {
-          "preset": "Preset"
+          "preset": "Modes to start with"
+        }
+      },
+      "people": {
+        "title": "Who lives here? (2 of 3)",
+        "description": "Pick the people whose phones tell Home Modes whether someone is home. When everybody has left, the mode switches to Away; when someone comes back, to Home.\n\nLeave it empty to switch Away and Home yourself. You can change this later.",
+        "data": {
+          "persons": "People",
+          "away_delay_min": "Wait before Away"
+        },
+        "data_description": {
+          "away_delay_min": "Minutes everybody must be gone, so a quick walk to the mailbox does not count."
+        }
+      },
+      "schedule": {
+        "title": "Night and morning (3 of 3)",
+        "description": "Home Modes can switch to Night in the evening and end Night in the morning, by the clock.\n\nLeave it off to switch Night yourself. Later you can also use sleep sensors, phone charging, motion or your phone's alarm (Options → Automatic switching).",
+        "data": {
+          "night_by_time": "Switch Night by the clock",
+          "night_start": "Night starts at",
+          "morning_time": "Morning starts at"
         }
       }
     },
     "abort": {
       "single_instance_allowed": "Home Modes Advanced is already set up. Only one household is supported."
+    },
+    "error": {
+      "same_time": "Night and morning must be at different times."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Home Modes options",
+        "title": "Home Modes",
         "menu_options": {
-          "edit_role": "Rename or enable/disable a mode",
-          "move_role": "Change the order of modes",
-          "add_custom": "Add a custom mode",
-          "remove_custom": "Remove a custom mode",
-          "save": "Done",
-          "presence": "Presence and away timers",
-          "night": "Night methods",
-          "morning": "Morning methods",
-          "override": "Manual override",
-          "user_rules": "User permissions (guests)",
-          "integrations": "Integrations: actions, Alarmo, vacation, notifications, history"
+          "modes": "Modes: rename, reorder, add your own",
+          "automation": "Automatic switching: presence, night, morning",
+          "user_rules": "Guests and restricted users",
+          "notify": "Notifications",
+          "integrations": "More: actions, Alarmo, vacation lights, history, import",
+          "save": "Close"
         },
-        "description": "Every screen is saved as soon as you submit it, so you can close this dialog at any time without losing anything."
+        "description": "{summary}\n\nEvery screen is saved as soon as you submit it, so you can close this dialog at any time."
+      },
+      "modes": {
+        "title": "Modes",
+        "description": "On: {modes}\n\nOff: {off}",
+        "menu_options": {
+          "edit_role": "Rename a mode or turn it on/off",
+          "move_role": "Change the order",
+          "add_custom": "Add your own mode",
+          "remove_custom": "Remove one of your own modes",
+          "init": "« Back"
+        }
+      },
+      "automation": {
+        "title": "Automatic switching",
+        "description": "{summary}\n\nNothing switches by itself until you set it up here. When someone picks a mode by hand, that choice wins for a while (see « Manual changes »).",
+        "menu_options": {
+          "presence": "Presence: Away and Home",
+          "night": "Night",
+          "morning": "Morning",
+          "override": "Manual changes: how long they win",
+          "init": "« Back"
+        }
       },
       "edit_role": {
         "title": "Choose a mode",
         "data": {
           "role": "Mode"
         },
-        "description": "Pick the mode to rename, enable or disable. Pick « Back » to return without changes."
+        "description": "Pick the mode to rename or turn on/off, or « Back »."
       },
       "edit_details": {
         "title": "Edit {role}",
@@ -46,8 +86,8 @@
           "enabled": "Enabled"
         },
         "data_description": {
-          "name": "Shown in the selector and used when calling services. Must be unique.",
-          "enabled": "Disabled modes have no entities and cannot be selected. At least one primary mode (Home, Night, Away, Vacation or a custom mode) must stay enabled."
+          "name": "Shown on cards and in the mode selector. Must be unique.",
+          "enabled": "A mode that is off disappears everywhere. At least one main mode (Home, Night, Away, Vacation or your own) must stay on."
         }
       },
       "move_role": {
@@ -56,103 +96,103 @@
           "role": "Mode",
           "direction": "Move"
         },
-        "description": "Current order: {order}. Pick « Back » to return without changes."
+        "description": "Current order: {order}.\n\nPick a mode and a direction, or « Back »."
       },
       "add_custom": {
         "title": "Add a custom mode",
         "data": {
           "name": "Name"
         },
-        "description": "Leave the name empty to go back without adding a mode."
+        "description": "For example Cinema or Cleaning. Leave the name empty to go back."
       },
       "remove_custom": {
         "title": "Remove a custom mode",
         "data": {
           "role": "Custom mode"
         },
-        "description": "The mode and its entities are removed. Pick « Back » to return without changes."
+        "description": "The mode and its entities are removed. Pick « Back » to keep everything."
       },
       "presence": {
-        "title": "Presence",
-        "description": "Persons that count for all home / all away. Unknown or unavailable person states never trigger a change.",
+        "title": "Presence: Away and Home",
+        "description": "When all people below have left, the mode switches to Away after the waiting time. When the first one comes back, it switches to Home.\n\nLeave the list empty to never switch by presence. A person whose location is unknown never causes a switch.",
         "data": {
-          "persons": "Persons",
-          "away_delay_min": "Away delay",
+          "persons": "People",
+          "away_delay_min": "Wait before Away",
           "vacation_after_h": "Vacation after"
         },
         "data_description": {
-          "away_delay_min": "Minutes everybody must stay away before Away (or All away) is set.",
-          "vacation_after_h": "Hours of continuous all away before Vacation is set (only if Vacation is enabled)."
+          "away_delay_min": "Minutes everybody must be gone, so a quick walk does not count.",
+          "vacation_after_h": "Hours everybody stays away before the mode switches to Vacation (only when the Vacation mode is on)."
         }
       },
       "night": {
         "title": "Night methods",
-        "description": "Choose any combination, or only 'Manual only' to never switch to Night automatically. Time window is a schedule rule; sleep sensors and phone charging are sensor rules. Phone charging only counts inside the time window.",
+        "description": "How does Home Modes know it is night? Pick one or more ways: the first one that happens switches to Night. Pick only « By hand only » to never switch automatically.",
         "data": {
           "methods": "Methods",
-          "start": "Window start",
-          "end": "Window end",
+          "start": "Evening starts at",
+          "end": "Night window ends at",
           "sleep_sensors": "Sleep sensors",
           "charging_sensors": "Phone charging sensors"
         },
         "data_description": {
-          "methods": "'Manual only' cannot be combined with other methods.",
-          "start": "Used by the time window and phone charging, and as the end of the morning motion window.",
+          "methods": "« By hand only » cannot be combined with the others.",
+          "start": "Used by « At a set time », starts the window for phone charging, and ends the morning motion window.",
           "sleep_sensors": "Only used by the sleep sensors method. Binary sensors or input booleans that turn on when someone goes to sleep (for example bed occupancy or a sleep-mode toggle).",
-          "charging_sensors": "Only used by the phone charging method. Lists charging binary sensors and Companion app sensors (pick the Battery state sensor of a phone)."
+          "charging_sensors": "Only used by the phone charging method. Lists charging binary sensors and Companion app sensors (pick the Battery state sensor of a phone).",
+          "end": "Phone charging only counts between the evening start and this time."
         }
       },
       "morning": {
         "title": "Morning methods",
-        "description": "Choose any combination, or only 'Manual only' to never leave Night automatically. Time is a schedule rule; motion and alarm are sensor rules. Motion only counts from the earliest time until the night window starts.",
+        "description": "How does Home Modes know Night is over? Pick one or more ways: the first one that happens ends Night. Pick only « By hand only » to never end Night automatically.",
         "data": {
           "methods": "Methods",
-          "time": "Morning time",
-          "earliest": "Earliest time for motion",
+          "time": "Morning at",
+          "earliest": "Motion counts from",
           "motion_sensors": "Motion sensors",
           "alarm_sensors": "Next alarm sensors"
         },
         "data_description": {
-          "methods": "'Manual only' cannot be combined with other methods.",
-          "time": "Only used by the time method.",
-          "earliest": "Only used by the motion method.",
+          "methods": "« By hand only » cannot be combined with the others.",
+          "time": "Only used by « At a set time ».",
+          "earliest": "Only used by « When there is motion »: motion before this time is ignored.",
           "motion_sensors": "Only used by the motion method. Lists motion, occupancy and presence sensors.",
           "alarm_sensors": "Only used by the next alarm method. Timestamp sensors such as the Companion app Next alarm sensor."
         }
       },
       "override": {
-        "title": "Manual override",
-        "description": "A mode change made by a user starts an override that blocks lower-priority auto-rules.",
+        "title": "Manual changes",
+        "description": "When someone picks a mode by hand, automatic switching is paused so it does not undo that choice right away. Choose when automatic switching takes over again.",
         "data": {
-          "until": "Override ends",
+          "until": "Automatic switching resumes",
           "duration_min": "Duration"
         },
         "data_description": {
-          "duration_min": "Used when the override ends after a duration."
+          "duration_min": "Only used with « After a set time »."
         }
       },
       "user_rules": {
-        "title": "User permissions",
-        "description": "Pick the user whose rule you want to change. Administrators are always unrestricted and are not listed ({count} users can get a rule). Users without a rule are unrestricted. Pick « Back » to return without changes.",
+        "title": "Guests and restricted users",
+        "description": "Limit which modes a user may pick, for example a guest account. Administrators can always pick every mode and are not listed ({count} users can be limited).\n\nPick a user, or « Back ».",
         "data": {
           "user": "User"
         }
       },
       "integrations": {
-        "title": "Integrations",
+        "title": "More",
         "menu_options": {
-          "actions": "Enter and exit actions",
-          "alarmo": "Alarmo bridge",
-          "vacation": "Vacation simulation",
-          "notify": "Notifications",
-          "history": "History log",
-          "init": "Back",
-          "import_input_select": "Import from input_select"
+          "actions": "Run actions when a mode starts or ends",
+          "alarmo": "Alarmo bridge (alarm system)",
+          "vacation": "Vacation lights (look like someone is home)",
+          "history": "History log size",
+          "import_input_select": "Import from an old input_select",
+          "init": "« Back"
         }
       },
       "actions": {
         "title": "Enter and exit actions",
-        "description": "Pick the mode (or overlay) whose actions you want to edit. Only enabled modes are listed. Every action runs as its own script with the timeout below; a failing or slow action never blocks the mode change. The timeout is saved either way. Pick « Back » to return without changes.",
+        "description": "Run your own actions when a mode starts (enter) or ends (exit), for example turn off all lights when Away starts. Pick the mode, or « Back ».\n\nA slow or failing action never blocks the mode change; it is stopped after the timeout below (saved either way).",
         "data": {
           "role": "Mode",
           "actions_timeout_s": "Timeout per action"
@@ -160,7 +200,7 @@
       },
       "actions_edit": {
         "title": "Actions of {role}",
-        "description": "Exit actions run before the mode changes, enter actions after. Available variables: from_role, to_role (role ids, aliases from_mode and to_mode), from_name, to_name, role, role_name, phase, source, rule, user_id. An action that changes the mode again is applied after the running change and is rate-limited.",
+        "description": "Exit actions run just before the mode changes, enter actions right after. Templates can use to_name, from_name, to_role, from_role, user_id and more (see the Configuration page in the documentation).",
         "data": {
           "enter_actions": "Enter actions",
           "exit_actions": "Exit actions"
@@ -200,8 +240,8 @@
         }
       },
       "vacation": {
-        "title": "Vacation simulation",
-        "description": "While the selected modes are active, the selected lights are switched on and off to look like someone is home. Only these lights are touched. Nothing is notified; the history shows when it starts and stops.",
+        "title": "Vacation lights",
+        "description": "While the chosen modes are active, the chosen lights go on and off in the evening so the house looks lived in. Only these lights are touched. The history shows when it starts and stops.",
         "data": {
           "enabled": "Enable the simulation",
           "roles": "Run while this mode is active",
@@ -219,18 +259,18 @@
       },
       "notify": {
         "title": "Notifications",
-        "description": "No notification is sent until you add a rule with at least one target.",
+        "description": "Get a message when the mode changes, when someone is refused, and more. Nothing is sent until you add a rule.",
         "menu_options": {
           "notify_add": "Add a rule",
           "notify_test": "Send a test notification",
           "notify_remove": "Remove a rule",
-          "notify_settings": "Duplicate rate limit",
-          "integrations": "Back"
+          "notify_settings": "Duplicate protection",
+          "init": "« Back"
         }
       },
       "notify_add": {
         "title": "Add a notification rule",
-        "description": "When should the notification be sent?",
+        "description": "When should the notification be sent? Pick « Back » to add nothing.",
         "data": {
           "event": "Event"
         }
@@ -250,8 +290,8 @@
         "description": "Pick the rule to remove. Pick « Back » to return without changes."
       },
       "notify_settings": {
-        "title": "Duplicate rate limit",
-        "description": "The same message is not sent to the same target more than once within this time.",
+        "title": "Duplicate protection",
+        "description": "The same message is not sent to the same target twice within this time. 0 turns it off.",
         "data": {
           "rate_limit_s": "Seconds"
         }
@@ -260,10 +300,11 @@
         "title": "History log",
         "data": {
           "max_entries": "Maximum number of entries"
-        }
+        },
+        "description": "The history log keeps the latest mode changes, refused attempts and system events. Older entries are dropped."
       },
       "import_input_select": {
-        "title": "Import from input_select",
+        "title": "Import from an old input_select",
         "description": "Choose the input_select that holds your old house mode. Nothing is written yet; the next steps only show suggestions and a preview. Leave it empty to go back.",
         "data": {
           "entity_id": "Input select"
@@ -285,16 +326,16 @@
         }
       },
       "user_rule_edit": {
-        "title": "Permissions of {user}",
-        "description": "An allow-list user (for example a guest) can only set the modes selected below. Allowed modes are ignored for unrestricted users.",
+        "title": "What may {user} pick?",
+        "description": "With « Only the modes below », {user} sees only those modes on the cards, and any other change is refused.",
         "data": {
-          "mode": "Rule",
-          "roles": "Allowed modes"
+          "mode": "Access",
+          "roles": "Modes this user may pick"
         }
       },
       "notify_add_details": {
         "title": "Add a notification rule",
-        "description": "Templates may use: from_role, to_role (role ids, stable), from_name, to_name, role_name (display names), role, source, rule, user, time. from_mode and to_mode are aliases of the ids; 'from' is reserved in Jinja and not available. Phones get the Android channels HM_ModeChanges, HM_Alerts and HM_Guests (iOS: grouped by the same names).\n\n**Two ways to pick a target.** Notify entities are the current Home Assistant style: phones from the Companion app and integrations that already moved over. Notify services are the older style that many integrations still only offer (for example notify groups, Telegram, email). A phone appears in both lists: pick it once, in either list.",
+        "description": "Message and title are optional: leave them empty for a standard text. Templates can use to_name, from_name, user, time and more (see the Notifications page in the documentation).\n\n**Two kinds of targets.** Notify entities are the current style: phones from the Companion app and integrations that already moved over. Notify services are the older style that many integrations still only offer (for example notify groups, Telegram, email). A phone appears in both lists: pick it once, in either list.\n\nPhones get their own Android channels (HM_ModeChanges, HM_Alerts, HM_Guests); on iOS they are grouped by the same names.",
         "data": {
           "role": "Mode",
           "targets": "Notify entities (phones and newer integrations)",
@@ -332,8 +373,8 @@
   "selector": {
     "preset": {
       "options": {
-        "simple": "Simple: Home, Night, Away, Vacation",
-        "extended": "Extended: Simple plus All home, All away, Guest and Do not disturb"
+        "simple": "Basic: Home, Night, Away and Vacation",
+        "extended": "Extended: Basic plus All home, All away, and Guest and Do not disturb (these two can be on together with another mode)"
       }
     },
     "direction": {
@@ -344,32 +385,32 @@
     },
     "night_methods": {
       "options": {
-        "time_window": "Time window",
-        "sleep_sensors": "Sleep sensors",
-        "phone_charging": "Phone charging",
-        "manual": "Manual only"
+        "time_window": "At a set time",
+        "sleep_sensors": "When a sleep sensor turns on",
+        "phone_charging": "When a phone starts charging in the evening",
+        "manual": "By hand only"
       }
     },
     "morning_methods": {
       "options": {
-        "time": "Time",
-        "motion": "Motion",
-        "alarm": "Next alarm",
-        "manual": "Manual only"
+        "time": "At a set time",
+        "motion": "When there is motion",
+        "alarm": "When my phone's alarm goes off",
+        "manual": "By hand only"
       }
     },
     "override_until": {
       "options": {
-        "end_of_day": "End of day",
-        "next_auto": "Next auto-rule trigger",
-        "duration": "After a duration",
-        "set_auto": "Until set_auto is called"
+        "end_of_day": "At the end of the day",
+        "next_auto": "At the next automatic switch (for example the next evening or morning)",
+        "duration": "After a set time",
+        "set_auto": "Only when automatic switching is turned back on (Auto switch)"
       }
     },
     "user_rule_mode": {
       "options": {
-        "unrestricted": "Unrestricted",
-        "allow_list": "Allow-list (guest)"
+        "unrestricted": "Can pick every mode",
+        "allow_list": "Only the modes below"
       }
     },
     "alarmo_direction": {

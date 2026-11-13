@@ -1,7 +1,7 @@
 # Vacation simulation
 
 Switches **selected lights** on and off in the evening so the house looks occupied. Off by
-default. Options → Integrations → Vacation simulation.
+default. Configure → More → Vacation lights.
 
 It runs only while the primary mode is one of the selected modes (default: Vacation) and the
 feature is enabled.

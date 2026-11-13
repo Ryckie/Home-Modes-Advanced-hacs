@@ -50,6 +50,9 @@ from .const import (
     CONF_VACATION_AFTER_H,
     CONF_VACATION_SIM,
     CUSTOM_PREFIX,
+    DEFAULT_AWAY_DELAY_MIN,
+    DEFAULT_MORNING_TIME,
+    DEFAULT_NIGHT_START,
     DEFAULT_ROLE_NAMES,
     DEFAULT_ROLE_ORDER,
     DOMAIN,
@@ -58,10 +61,12 @@ from .const import (
     MORNING_MANUAL,
     MORNING_METHODS,
     MORNING_MOTION,
+    MORNING_TIME,
     NIGHT_MANUAL,
     NIGHT_METHODS,
     NIGHT_PHONE_CHARGING,
     NIGHT_SLEEP_SENSORS,
+    NIGHT_TIME_WINDOW,
     PRESET_ENABLED_ROLES,
     PRESET_SIMPLE,
     PRESETS,
@@ -116,6 +121,14 @@ CONF_USER_ROLES = "roles"
 CONF_ENTER_ACTIONS = "enter_actions"
 CONF_EXIT_ACTIONS = "exit_actions"
 CONF_EVENT = "event"
+# Fields of the first-setup "Night and morning" screen.
+SETUP_NIGHT_BY_TIME = "night_by_time"
+SETUP_NIGHT_START = "night_start"
+SETUP_MORNING_TIME = "morning_time"
+
+# Submenus of the options menu, and what each one holds.
+MODES_MENU = "modes"
+AUTOMATION_MENU = "automation"
 
 # Picked in a dropdown to leave a picker step without changing anything. Picker steps
 # cannot have a back button in Home Assistant, so every picker offers this entry instead.
@@ -200,15 +213,16 @@ class HomeModesConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
     MINOR_VERSION = 1
 
+    def __init__(self) -> None:
+        """Initialize the setup flow."""
+        self._preset = PRESET_SIMPLE
+        self._setup_options: dict[str, Any] = {}
+
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Choose a preset."""
+        """Step 1 of 3: choose the modes to start with."""
         if user_input is not None:
-            preset = user_input[CONF_PRESET]
-            return self.async_create_entry(
-                title=TITLE,
-                data={CONF_PRESET: preset},
-                options={CONF_ROLES: build_preset_roles(preset)},
-            )
+            self._preset = user_input[CONF_PRESET]
+            return await self.async_step_people()
         schema = vol.Schema(
             {
                 vol.Required(CONF_PRESET, default=PRESET_SIMPLE): SelectSelector(
@@ -222,11 +236,89 @@ class HomeModesConfigFlow(ConfigFlow, domain=DOMAIN):
         )
         return self.async_show_form(step_id="user", data_schema=schema)
 
+    async def async_step_people(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Step 2 of 3: the people whose presence switches Away and Home (optional)."""
+        if user_input is not None:
+            self._setup_options[CONF_PERSONS] = list(user_input.get(CONF_PERSONS) or [])
+            self._setup_options[CONF_AWAY_DELAY_MIN] = user_input[CONF_AWAY_DELAY_MIN]
+            return await self.async_step_schedule()
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_PERSONS, default=[]): EntitySelector(
+                    EntitySelectorConfig(domain="person", multiple=True)
+                ),
+                vol.Required(CONF_AWAY_DELAY_MIN, default=DEFAULT_AWAY_DELAY_MIN): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=720,
+                        step=1,
+                        unit_of_measurement="min",
+                        mode=NumberSelectorMode.BOX,
+                    )
+                ),
+            }
+        )
+        return self.async_show_form(step_id="people", data_schema=schema)
+
+    async def async_step_schedule(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Step 3 of 3: switch Night by the clock (optional), then create the entry."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            start = user_input[SETUP_NIGHT_START]
+            morning = user_input[SETUP_MORNING_TIME]
+            if user_input.get(SETUP_NIGHT_BY_TIME):
+                if start == morning:
+                    errors[SETUP_MORNING_TIME] = "same_time"
+                else:
+                    self._setup_options[CONF_NIGHT] = {
+                        KEY_METHODS: [NIGHT_TIME_WINDOW],
+                        KEY_START: start,
+                        KEY_END: morning,
+                    }
+                    self._setup_options[CONF_MORNING] = {
+                        KEY_METHODS: [MORNING_TIME],
+                        KEY_TIME: morning,
+                    }
+            if not errors:
+                return self.async_create_entry(
+                    title=TITLE,
+                    data={CONF_PRESET: self._preset},
+                    options={CONF_ROLES: build_preset_roles(self._preset), **self._setup_options},
+                )
+        schema = vol.Schema(
+            {
+                vol.Required(SETUP_NIGHT_BY_TIME, default=False): BooleanSelector(),
+                vol.Required(SETUP_NIGHT_START, default=DEFAULT_NIGHT_START): TimeSelector(),
+                vol.Required(SETUP_MORNING_TIME, default=DEFAULT_MORNING_TIME): TimeSelector(),
+            }
+        )
+        return self.async_show_form(step_id="schedule", data_schema=schema, errors=errors)
+
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> HomeModesOptionsFlow:
         """Return the options flow."""
         return HomeModesOptionsFlow()
+
+
+_NIGHT_TEXT = {
+    NIGHT_TIME_WINDOW: "at {time}",
+    NIGHT_SLEEP_SENSORS: "sleep sensors",
+    NIGHT_PHONE_CHARGING: "phone charging",
+}
+_MORNING_TEXT = {
+    MORNING_TIME: "at {time}",
+    MORNING_MOTION: "motion",
+    MORNING_ALARM: "phone alarm",
+}
+
+
+def _methods_text(methods: frozenset[str], texts: dict[str, str], at: Any) -> str:
+    """Describe the chosen night or morning methods in a few words."""
+    parts = [texts[m].format(time=at.strftime("%H:%M")) for m in texts if m in methods]
+    return ", ".join(parts) if parts else "only by hand"
 
 
 class HomeModesOptionsFlow(OptionsFlow):
@@ -299,14 +391,89 @@ class HomeModesOptionsFlow(OptionsFlow):
     # --- menus ----------------------------------------------------------------
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Show the options menu."""
-        menu = ["edit_role", "move_role", "presence", "night", "morning", "override", "user_rules"]
+        """Show the main menu with a short summary of what is set up."""
+        return self.async_show_menu(
+            step_id="init",
+            menu_options=[
+                MODES_MENU,
+                AUTOMATION_MENU,
+                "user_rules",
+                "notify",
+                "integrations",
+                "save",
+            ],
+            description_placeholders={"summary": self._summary()},
+        )
+
+    async def async_step_modes(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Submenu: rename, order, add and remove modes."""
+        menu = ["edit_role", "move_role"]
         if len(self._custom_ids()) < MAX_CUSTOM_MODES:
             menu.append("add_custom")
         if self._custom_ids():
             menu.append("remove_custom")
-        menu.extend(["integrations", "save"])
-        return self.async_show_menu(step_id="init", menu_options=menu)
+        menu.append("init")
+        return self.async_show_menu(
+            step_id=MODES_MENU,
+            menu_options=menu,
+            description_placeholders={
+                "modes": ", ".join(r.name for r in self.enabled_roles) or "-",
+                "off": ", ".join(r.name for r in self.roles if not r.enabled) or "-",
+            },
+        )
+
+    async def async_step_automation(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Submenu: presence, night, morning and manual changes."""
+        return self.async_show_menu(
+            step_id=AUTOMATION_MENU,
+            menu_options=["presence", "night", "morning", "override", "init"],
+            description_placeholders={"summary": self._summary(automation_only=True)},
+        )
+
+    def _summary(self, *, automation_only: bool = False) -> str:
+        """Return a short Markdown list of the current setup (English, like the rest)."""
+        auto = self.settings
+        lines: list[str] = []
+        if not automation_only:
+            lines.append("**Modes:** " + (", ".join(r.name for r in self.enabled_roles) or "-"))
+        if auto.persons:
+            minutes = int(auto.away_delay.total_seconds() // 60)
+            people = f"{len(auto.persons)} " + ("person" if len(auto.persons) == 1 else "people")
+            lines.append(f"**Presence:** {people}, Away after {minutes} min")
+        else:
+            lines.append("**Presence:** not set up (Away and Home only by hand)")
+        lines.append(
+            "**Night:** " + _methods_text(auto.night.methods, _NIGHT_TEXT, auto.night.start)
+        )
+        lines.append(
+            "**Morning:** " + _methods_text(auto.morning.methods, _MORNING_TEXT, auto.morning.at)
+        )
+        if automation_only:
+            return "\n".join(f"- {line}" for line in lines)
+        integrations = parse_integration_settings(self.extra)
+        restricted = sum(
+            1
+            for rule in (self.extra.get(CONF_USER_RULES) or {}).values()
+            if (rule or {}).get("mode") == UserRuleMode.ALLOW_LIST
+        )
+        lines.append(f"**Restricted users:** {restricted or 'none'}")
+        rules = len(integrations.notify.rules)
+        lines.append(
+            f"**Notifications:** {rules or 'none'}"
+            + (" rules" if rules > 1 else " rule" if rules else "")
+        )
+        extras = [
+            name
+            for name, on in (
+                ("Alarmo bridge", integrations.alarmo.enabled),
+                ("vacation lights", integrations.vacation.enabled),
+            )
+            if on
+        ]
+        lines.append("**More:** " + (", ".join(extras) if extras else "nothing turned on"))
+        return "\n".join(f"- {line}" for line in lines)
 
     async def async_step_save(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Close the options (everything was already saved step by step)."""
@@ -323,7 +490,6 @@ class HomeModesOptionsFlow(OptionsFlow):
                 "actions",
                 "alarmo",
                 "vacation",
-                "notify",
                 "history",
                 "import_input_select",
                 "init",
@@ -758,7 +924,7 @@ class HomeModesOptionsFlow(OptionsFlow):
         menu = ["notify_add"]
         if parse_integration_settings(self.extra).notify.rules:
             menu.extend(["notify_test", "notify_remove"])
-        menu.extend(["notify_settings", "integrations"])
+        menu.extend(["notify_settings", "init"])
         return self.async_show_menu(step_id="notify", menu_options=menu)
 
     def _notify_options(self) -> dict[str, Any]:
@@ -985,7 +1151,7 @@ class HomeModesOptionsFlow(OptionsFlow):
         if user_input is not None:
             role = user_input.get(CONF_ROLE)
             if not role or role == BACK:
-                return await self.async_step_init()
+                return await self.async_step_modes()
             self._editing = role
             return await self.async_step_edit_details()
         return self.async_show_form(
@@ -1011,7 +1177,7 @@ class HomeModesOptionsFlow(OptionsFlow):
             if (error := validate_roles(candidate)) is None:
                 self._roles = candidate
                 self._commit()
-                return await self.async_step_init()
+                return await self.async_step_modes()
             errors["base"] = error
         schema = vol.Schema(
             {
@@ -1033,7 +1199,7 @@ class HomeModesOptionsFlow(OptionsFlow):
         if user_input is not None:
             role = user_input.get(CONF_ROLE)
             if not role or role == BACK:
-                return await self.async_step_init()
+                return await self.async_step_modes()
             roles = list(self.roles)
             index = next(i for i, r in enumerate(roles) if r.id == role)
             target = index - 1 if user_input[CONF_DIRECTION] == DIRECTION_UP else index + 1
@@ -1041,7 +1207,7 @@ class HomeModesOptionsFlow(OptionsFlow):
                 roles[index], roles[target] = roles[target], roles[index]
                 self._roles = roles
                 self._commit()
-            return await self.async_step_init()
+            return await self.async_step_modes()
         schema = vol.Schema(
             {
                 vol.Required(CONF_ROLE, default=BACK): _role_selector(self.roles, back=True),
@@ -1068,7 +1234,7 @@ class HomeModesOptionsFlow(OptionsFlow):
         if user_input is not None:
             name = (user_input.get(CONF_NAME) or "").strip()
             if not name:
-                return await self.async_step_init()
+                return await self.async_step_modes()
             used = set(self._custom_ids())
             free = next(
                 (
@@ -1085,7 +1251,7 @@ class HomeModesOptionsFlow(OptionsFlow):
                 if (error := validate_roles(candidate)) is None:
                     self._roles = candidate
                     self._commit()
-                    return await self.async_step_init()
+                    return await self.async_step_modes()
                 errors["base"] = error
         return self.async_show_form(
             step_id="add_custom",
@@ -1102,12 +1268,12 @@ class HomeModesOptionsFlow(OptionsFlow):
         if user_input is not None:
             role = user_input.get(CONF_ROLE)
             if not role or role == BACK:
-                return await self.async_step_init()
+                return await self.async_step_modes()
             candidate = [r for r in self.roles if r.id != role]
             if (error := validate_roles(candidate)) is None:
                 self._roles = candidate
                 self._commit()
-                return await self.async_step_init()
+                return await self.async_step_modes()
             errors["base"] = error
         return self.async_show_form(
             step_id="remove_custom",
@@ -1129,7 +1295,7 @@ class HomeModesOptionsFlow(OptionsFlow):
             self.extra[CONF_AWAY_DELAY_MIN] = user_input[CONF_AWAY_DELAY_MIN]
             self.extra[CONF_VACATION_AFTER_H] = user_input[CONF_VACATION_AFTER_H]
             self._commit()
-            return await self.async_step_init()
+            return await self.async_step_automation()
         schema = vol.Schema(
             {
                 vol.Optional(CONF_PERSONS, default=list(current.persons)): EntitySelector(
@@ -1184,7 +1350,7 @@ class HomeModesOptionsFlow(OptionsFlow):
                     KEY_CHARGING_SENSORS: list(user_input.get(KEY_CHARGING_SENSORS, [])),
                 }
                 self._commit()
-                return await self.async_step_init()
+                return await self.async_step_automation()
         schema = vol.Schema(
             {
                 vol.Optional(KEY_METHODS, default=sorted(current.methods)): SelectSelector(
@@ -1230,7 +1396,7 @@ class HomeModesOptionsFlow(OptionsFlow):
                     KEY_ALARM_SENSORS: list(user_input.get(KEY_ALARM_SENSORS, [])),
                 }
                 self._commit()
-                return await self.async_step_init()
+                return await self.async_step_automation()
         schema = vol.Schema(
             {
                 vol.Optional(KEY_METHODS, default=sorted(current.methods)): SelectSelector(
@@ -1264,7 +1430,7 @@ class HomeModesOptionsFlow(OptionsFlow):
                 KEY_DURATION_MIN: user_input[KEY_DURATION_MIN],
             }
             self._commit()
-            return await self.async_step_init()
+            return await self.async_step_automation()
         schema = vol.Schema(
             {
                 vol.Required(KEY_UNTIL, default=current.until): SelectSelector(
@@ -1312,8 +1478,8 @@ class HomeModesOptionsFlow(OptionsFlow):
         def label(user: Any) -> str:
             rule = rules.get(user.id) or {}
             if rule.get("mode") == UserRuleMode.ALLOW_LIST:
-                return f"{user.name or user.id} (allow-list)"
-            return f"{user.name or user.id} (unrestricted)"
+                return f"{user.name or user.id} (restricted)"
+            return f"{user.name or user.id} (can pick every mode)"
 
         options = [SelectOptionDict(value=BACK, label=BACK_LABEL)] + [
             SelectOptionDict(value=u.id, label=label(u)) for u in users

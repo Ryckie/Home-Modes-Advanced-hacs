@@ -7,6 +7,8 @@ from homeassistant.data_entry_flow import FlowResultType
 
 from custom_components.home_modes.const import CONF_PRESET, CONF_ROLES, DOMAIN
 
+from .helpers import options_menu
+
 
 def _enabled(options: dict) -> dict[str, bool]:
     return {r["id"]: r["enabled"] for r in options[CONF_ROLES]}
@@ -20,6 +22,10 @@ async def test_user_flow_simple_and_extended(hass: HomeAssistant) -> None:
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_PRESET: "simple"}
     )
+    assert result["step_id"] == "people"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["step_id"] == "schedule"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
     assert result["type"] is FlowResultType.CREATE_ENTRY
     entry = hass.config_entries.async_entries(DOMAIN)[0]
     assert entry.data == {CONF_PRESET: "simple"}
@@ -42,6 +48,8 @@ async def test_user_flow_simple_and_extended(hass: HomeAssistant) -> None:
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_PRESET: "extended"}
     )
+    await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    await hass.config_entries.flow.async_configure(result["flow_id"], {})
     entry = hass.config_entries.async_entries(DOMAIN)[0]
     assert [k for k, v in _enabled(entry.options).items() if v] == [
         "home",
@@ -56,7 +64,7 @@ async def test_user_flow_simple_and_extended(hass: HomeAssistant) -> None:
 
 
 async def _menu(hass: HomeAssistant, flow_id: str, step: str):
-    return await hass.config_entries.options.async_configure(flow_id, {"next_step_id": step})
+    return await options_menu(hass, flow_id, step)
 
 
 async def test_options_menu_and_rename_toggle(hass: HomeAssistant, entry) -> None:
@@ -64,17 +72,14 @@ async def test_options_menu_and_rename_toggle(hass: HomeAssistant, entry) -> Non
     result = await hass.config_entries.options.async_init(entry.entry_id)
     assert result["type"] is FlowResultType.MENU
     assert result["menu_options"] == [
-        "edit_role",
-        "move_role",
-        "presence",
-        "night",
-        "morning",
-        "override",
+        "modes",
+        "automation",
         "user_rules",
-        "add_custom",
+        "notify",
         "integrations",
         "save",
     ]
+    assert "**Presence:** not set up" in result["description_placeholders"]["summary"]
     flow_id = result["flow_id"]
 
     result = await _menu(hass, flow_id, "edit_role")
@@ -185,9 +190,7 @@ async def test_options_custom_modes(hass: HomeAssistant, entry) -> None:
     for n in range(3, 11):
         await add(f"Mode {n}")
 
-    step = await hass.config_entries.options.async_configure(
-        flow_id, {"next_step_id": "remove_custom"}
-    )
+    step = await options_menu(hass, flow_id, "remove_custom")
     assert step["step_id"] == "remove_custom"
     result = await hass.config_entries.options.async_configure(flow_id, {"role": "custom_2"})
     assert result["type"] is FlowResultType.MENU
@@ -276,11 +279,11 @@ async def test_options_pickers_can_go_back(hass: HomeAssistant, entry) -> None:
             payload["direction"] = "up"
         result = await hass.config_entries.options.async_configure(flow_id, payload)
         assert result["type"] is FlowResultType.MENU
-        assert result["step_id"] == "init"
+        assert result["step_id"] == ("init" if step == "user_rules" else "modes")
     # An empty name leaves "add a custom mode" without adding one.
     await _menu(hass, flow_id, "add_custom")
     result = await hass.config_entries.options.async_configure(flow_id, {})
-    assert result["step_id"] == "init"
+    assert result["step_id"] == "modes"
     # An empty input_select leaves the import.
     await _menu(hass, flow_id, "integrations")
     await _menu(hass, flow_id, "import_input_select")
@@ -331,3 +334,40 @@ async def test_options_manual_only_is_exclusive(hass: HomeAssistant, entry) -> N
         {"methods": ["manual", "time"], "time": "07:00:00", "earliest": "05:00:00"},
     )
     assert result["errors"] == {"methods": "manual_exclusive"}
+
+
+async def test_first_setup_presence_and_night_by_the_clock(hass: HomeAssistant) -> None:
+    """The optional setup screens store presence and a clock-based night and morning."""
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    flow_id = result["flow_id"]
+    await hass.config_entries.flow.async_configure(flow_id, {CONF_PRESET: "simple"})
+    hass.states.async_set("person.anna", "home")
+    await hass.config_entries.flow.async_configure(
+        flow_id, {"persons": ["person.anna"], "away_delay_min": 7}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        flow_id, {"night_by_time": True, "night_start": "23:00:00", "morning_time": "23:00:00"}
+    )
+    assert result["errors"] == {"morning_time": "same_time"}
+    result = await hass.config_entries.flow.async_configure(
+        flow_id, {"night_by_time": True, "night_start": "23:00:00", "morning_time": "06:30:00"}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    options = hass.config_entries.async_entries(DOMAIN)[0].options
+    assert options["persons"] == ["person.anna"]
+    assert options["away_delay_min"] == 7
+    assert options["night"] == {
+        "methods": ["time_window"],
+        "start": "23:00:00",
+        "end": "06:30:00",
+    }
+    assert options["morning"] == {"methods": ["time"], "time": "06:30:00"}
+
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    summary = result["description_placeholders"]["summary"]
+    assert "**Presence:** 1 person, Away after 7 min" in summary
+    assert "**Night:** at 23:00" in summary
+    assert "**Morning:** at 06:30" in summary
+    result = await options_menu(hass, result["flow_id"], "automation")
+    assert result["menu_options"] == ["presence", "night", "morning", "override", "init"]

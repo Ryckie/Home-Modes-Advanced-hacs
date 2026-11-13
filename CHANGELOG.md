@@ -6,6 +6,14 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Easier setup: after choosing the modes, setup asks who lives here (presence) and whether to
+  switch Night by the clock. Both are optional.
+- The options menu is grouped (Modes, Automatic switching, Guests and restricted users,
+  Notifications, More) and starts with a short summary of what is set up.
+- Plain-language texts on every screen.
+
 ### Added
 
 - Options → Notifications → **Send a test notification**: sends a test to every target of a
