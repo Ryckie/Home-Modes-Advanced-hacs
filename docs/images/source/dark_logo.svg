@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 256" width="840" height="256">
+  <g transform="translate(8 8) scale(0.94)">
+  <defs>
+    <linearGradient id="g" x1="30" y1="30" x2="226" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5B8CFF"/>
+      <stop offset="1" stop-color="#3A3CC8"/>
+    </linearGradient>
+  </defs>
+  <path d="M128 34 L226 116 L226 222 L30 222 L30 116 Z" fill="url(#g)"
+        stroke="url(#g)" stroke-width="18" stroke-linejoin="round"/>
+  <g fill="none" stroke-width="16" stroke-linecap="round">
+    <path d="M139.9 107.6 A46 46 0 0 1 172.4 140.1" stroke="#FFC53D"/>
+    <path d="M172.4 163.9 A46 46 0 0 1 139.9 196.4" stroke="#FFFFFF" stroke-opacity="0.6"/>
+    <path d="M116.1 196.4 A46 46 0 0 1 83.6 163.9" stroke="#FFFFFF" stroke-opacity="0.6"/>
+    <path d="M83.6 140.1 A46 46 0 0 1 116.1 107.6" stroke="#FFFFFF" stroke-opacity="0.6"/>
+  </g>
+  <line x1="128" y1="152" x2="146" y2="134" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="128" cy="152" r="11" fill="#FFFFFF"/></g>
+  <text x="266" y="134" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="84"
+        fill="#F2F4F8">Home Modes</text>
+  <text x="270" y="194" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="38" letter-spacing="14"
+        fill="#9DB4FF">ADVANCED</text>
+</svg>

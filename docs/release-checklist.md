@@ -28,15 +28,16 @@ Tag format: `vMAJOR.MINOR.PATCH` or `vMAJOR.MINOR.PATCH-suffix`. Run
 - [ ] Repository is public, has a description and topics (`home-assistant`, `hacs`,
       `home-assistant-custom-component`, `integration`) and Issues enabled (HACS checks this).
 - [ ] **Security → Private vulnerability reporting** enabled (SECURITY.md relies on it).
-- [ ] **v0.9.1 ships with the brand placeholders** (grey boxes marked "PLACEHOLDER"); replace them
-      in `custom_components/home_modes/brand/` before 1.0 (see below).
+- [x] Brand images in `custom_components/home_modes/brand/` (see below and
+      [brand-images.md](brand-images.md)).
+- [ ] Upload `docs/images/banner.png` as the repository's social preview.
 - [ ] Add real screenshots under `docs/images/` and remove the placeholder note in the README.
 - [ ] Run the GitHub workflows once on `main` and fix whatever they report (they could not be
       run in the development environment).
 - [ ] Actions pins: the workflows pin `actions/*` to a major version. `hassfest@master` and
       `hacs/action@main` are floating by the maintainers' own documentation; check them when CI turns red.
 
-### Brand images you must provide
+### Brand images (provided)
 
 Folder: `custom_components/home_modes/brand/` (Home Assistant 2026.3 and newer read local
 images from here; they take priority over the brands CDN; do not use Home Assistant branded images).

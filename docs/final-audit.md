@@ -121,7 +121,7 @@ The GitHub workflows and everything on real devices have **not** been run.
 | Release workflow; release script; first tag v0.9.1 pre-release | `release.yml`, `.github/scripts/release_info.py` | `test_release_files.py::test_release_script_*` | partly | Script tested; the workflow itself never ran |
 | README with community notice, why, features, install, quick start, screenshot placeholders, status, security notes, Companion push note | `README.md` | `test_release_files.py::test_every_doc_is_linked_from_the_readme` | done | |
 | CHANGELOG, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue and PR templates | repository root, `.github/` | `test_release_files.py` | done | Private vulnerability reporting must be enabled in the repository settings |
-| Brand images | `custom_components/home_modes/brand/` | `test_release_files.py::test_brand_images_have_the_documented_sizes` | partly | **Placeholders**; must be replaced |
+| Brand images | `custom_components/home_modes/brand/` | `test_release_files.py::test_brand_images_have_the_documented_sizes` | done | Original mark, light and dark logo |
 | Blueprints (three, roles, rename-proof, import links) | `blueprints/automation/home_modes/` | `tests/test_blueprints.py`, `test_release_files.py::test_blueprint_import_links_in_the_docs_are_correct` | done | The brief asked for one example; three delivered |
 | Docs: configuration, priority/override, Alarmo, guest, migration, examples, security, translations, release checklist, research, community post | `docs/` | `test_release_files.py::test_every_doc_is_linked_from_the_readme` | done | |
 | This audit only cites files, symbols and tests that exist | `docs/final-audit.md` | `test_audit_references.py::test_every_reference_in_the_audit_exists` | done | Wrong or missing references fail the tests |
@@ -228,7 +228,7 @@ history/diagnostics redaction. These have tests, but I did not show that the tes
 | 6 | Medium | Auto-rule behaviour surprises users (next_auto, vacation timers, expiry re-evaluation) | Detailed rules and a decisions table | Feedback from testers |
 | 7 | Medium | CI Python version: Python 3.14.2 exactly makes one test (`test_vacation_recorder.py`) error in its fixture; HA requires only >=3.14.2. Found in the clean run | CI now uses `3.14` (latest patch); 3.14.6 passes | Confirm the runner resolves `3.14` and the job is green |
 | 8 | Low | The card's real rendering and the visual editors may break on a Home Assistant frontend change | Uses standard `ha-*` elements and CSS variables; jsdom checks | Manual checklist |
-| 9 | Low | Brand images are placeholders | Tests check the sizes; release checklist | Replace |
+| 9 | Low | Brand images were placeholders | Tests check the sizes | Fixed: real icon and logos |
 | 10 | Low | 2026.11.x relies on a test shim | Best-effort job, `continue-on-error` | Drop the shim when the plugin supports 2026.11 |
 | 11 | Low | Missed during development: the card's version constant lagged behind the manifest | Now covered by `test_frontend.py::test_js_version_matches_the_manifest` | None |
 | 12 | Low | Raspberry Pi load unknown | Event-driven design, delayed saves, capped history | Measure |
@@ -237,7 +237,7 @@ history/diagnostics redaction. These have tests, but I did not show that the tes
 ## 11. Recommendation
 
 - **Public beta (v0.9.1 as a GitHub pre-release): GO**, with these conditions before announcing:
-  1. Replace the brand placeholders (or accept visible placeholders for the beta and say so).
+  1. ~~Replace the brand placeholders~~ (done).
   2. Enable private vulnerability reporting, Issues, topics and the description.
   3. Run the workflows once on GitHub and fix what they report.
   4. Do a smoke install on a real instance (fresh install, both presets, one automation, the card).

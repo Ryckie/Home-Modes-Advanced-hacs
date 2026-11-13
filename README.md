@@ -1,5 +1,7 @@
 # Home Modes Advanced
 
+![Home Modes Advanced](docs/images/banner.png)
+
 A first-class "house mode" for Home Assistant: one primary mode (Home, Night, Away, Vacation,
 custom modes), stackable overlays (Guest, Do not disturb), automatic rules driven by presence,
 time and sensors, manual overrides, and server-side permissions for guests.
@@ -7,8 +9,7 @@ time and sensors, manual overrides, and server-side permissions for guests.
 > **Community integration.** This is an independent, community-built custom integration. It is
 > not made, endorsed or supported by Nabu Casa or the Home Assistant project.
 
-> **Beta (0.9.1).** The icon and logo are **placeholders** and will be replaced before 1.0.
-> Tested with automated tests only. Not yet tested with a real Alarmo, on real
+> **Beta (0.9.1).** Tested with automated tests only. Not yet tested with a real Alarmo, on real
 > iOS and Android devices, or on a Raspberry Pi. See [Status](#status).
 
 ## Why

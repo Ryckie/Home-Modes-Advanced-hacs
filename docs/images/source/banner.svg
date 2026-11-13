@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0E1430"/>
+      <stop offset="1" stop-color="#1F2B63"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="1060" cy="230" r="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5B8CFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#5B8CFF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#FFFFFF" fill-opacity="0.06"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#dots)"/>
+  <rect width="1280" height="640" fill="url(#glow)"/>
+  <g transform="translate(860 70) scale(1.45)">
+  <defs>
+    <linearGradient id="m" x1="30" y1="30" x2="226" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5B8CFF"/>
+      <stop offset="1" stop-color="#3A3CC8"/>
+    </linearGradient>
+  </defs>
+  <path d="M128 34 L226 116 L226 222 L30 222 L30 116 Z" fill="url(#m)"
+        stroke="url(#m)" stroke-width="18" stroke-linejoin="round"/>
+  <g fill="none" stroke-width="16" stroke-linecap="round">
+    <path d="M139.9 107.6 A46 46 0 0 1 172.4 140.1" stroke="#FFC53D"/>
+    <path d="M172.4 163.9 A46 46 0 0 1 139.9 196.4" stroke="#FFFFFF" stroke-opacity="0.6"/>
+    <path d="M116.1 196.4 A46 46 0 0 1 83.6 163.9" stroke="#FFFFFF" stroke-opacity="0.6"/>
+    <path d="M83.6 140.1 A46 46 0 0 1 116.1 107.6" stroke="#FFFFFF" stroke-opacity="0.6"/>
+  </g>
+  <line x1="128" y1="152" x2="146" y2="134" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="128" cy="152" r="11" fill="#FFFFFF"/></g>
+  <text x="96" y="214" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="84" fill="#FFFFFF">Home Modes</text>
+  <text x="100" y="272" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="34" letter-spacing="13" fill="#9DB4FF">ADVANCED</text>
+  <text font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#C9D2EA">
+    <tspan x="96" y="350">One house mode for Home Assistant: primary modes,</tspan>
+    <tspan x="96" y="392">stackable overlays, automatic rules and guest permissions.</tspan>
+  </text>
+  <g transform="translate(96 468)">
+    <rect width="126" height="52" rx="26" fill="#FFFFFF" fill-opacity="0.08"
+          stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="2" />
+    <circle cx="28" cy="26" r="8" fill="#FFC53D"/>
+    <text x="46" y="35" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="25" fill="#E8ECF8">Home</text>
+  </g><g transform="translate(236 468)">
+    <rect width="141.5" height="52" rx="26" fill="#FFFFFF" fill-opacity="0.08"
+          stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="2" />
+    <circle cx="28" cy="26" r="8" fill="#8E9BFF"/>
+    <text x="46" y="35" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="25" fill="#E8ECF8">Night</text>
+  </g><g transform="translate(391.5 468)">
+    <rect width="126" height="52" rx="26" fill="#FFFFFF" fill-opacity="0.08"
+          stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="2" />
+    <circle cx="28" cy="26" r="8" fill="#4FD1C5"/>
+    <text x="46" y="35" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="25" fill="#E8ECF8">Away</text>
+  </g><g transform="translate(531.5 468)">
+    <rect width="188" height="52" rx="26" fill="#FFFFFF" fill-opacity="0.08"
+          stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="2" />
+    <circle cx="28" cy="26" r="8" fill="#FF8A65"/>
+    <text x="46" y="35" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="25" fill="#E8ECF8">Vacation</text>
+  </g><g transform="translate(733.5 468)">
+    <rect width="172.5" height="52" rx="26" fill="none" fill-opacity="0"
+          stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="6 6"/>
+    <circle cx="28" cy="26" r="8" fill="#C792EA"/>
+    <text x="46" y="35" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="25" fill="#E8ECF8">+ Guest</text>
+  </g><g transform="translate(920 468)">
+    <rect width="312" height="52" rx="26" fill="none" fill-opacity="0"
+          stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="6 6"/>
+    <circle cx="28" cy="26" r="8" fill="#F06292"/>
+    <text x="46" y="35" font-family="Segoe UI, Arial, sans-serif" font-weight="600" font-size="25" fill="#E8ECF8">+ Do not disturb</text>
+  </g>
+  <text x="96" y="584" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#7F8BB0">Community custom integration · Install with HACS</text>
+</svg>

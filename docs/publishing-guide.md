@@ -71,7 +71,7 @@ Settings → Actions → General:
   license, topics. The most common failures are a missing **description**, missing **topics**,
   **Issues** turned off, or a missing brand `icon.png`: fix them in the settings (section 3).
 - Then open the run → **Re-run failed jobs**.
-- The "brands" check may complain about the placeholder images or about brand registration.
+- The "brands" check may complain about brand registration.
   If it blocks you, tell me the exact message (UNVERIFIED how this check treats local `brand/` folders).
 - The step uses `hacs/action@main` (floating by design; its newest tag is old).
 
@@ -152,4 +152,4 @@ is not found, the repository is not public yet or has no release. UNVERIFIED: th
 - Everything on GitHub: the workflows, the repository settings pages and their current names, release creation, tokens.
 - HACS: custom repository screens, pre-release visibility, "Show beta versions" wording.
 - The Marketplace screens and pre-release display on Home Assistant 2026.11.
-- How the HACS "brands" check treats the placeholder images.
+- How the HACS "brands" check treats the local `brand/` images.

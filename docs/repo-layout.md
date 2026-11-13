@@ -35,7 +35,7 @@ custom_components/home_modes/
   ws.py               websocket commands home_modes/history and home_modes/allowed_roles
   manifest.json, services.yaml
   frontend/           home-modes-cards.js (the two cards and their editors; plain JS)
-  brand/              icon.png, icon@2x.png, logo.png, logo@2x.png (PLACEHOLDERS, replace them)
+  brand/              icon.png, icon@2x.png, logo.png, logo@2x.png, dark_logo.png, dark_logo@2x.png
   translations/       en.json (the single source of strings)
 blueprints/automation/home_modes/
   heating_setback_away_vacation.yaml

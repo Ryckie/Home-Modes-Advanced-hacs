@@ -6,6 +6,11 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Real brand images replace the placeholders: icon, logo and a dark-theme logo
+  (`custom_components/home_modes/brand/`), plus a README banner. SVG sources in `docs/images/source/`.
+
 ### Fixed
 
 - Alarmo bridge: when Alarmo refuses to arm after its exit delay (open sensors), it puts the
