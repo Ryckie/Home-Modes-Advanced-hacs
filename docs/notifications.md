@@ -33,7 +33,11 @@ These entries are visible to administrators only (see [history.md](history.md)).
 
 ## Targets
 
-- **Notify entities** (`notify.*`): sent with `notify.send_message` (message and title only).
+- **Companion app notify entities** (`notify.<phone>`, from the Mobile App integration): sent
+  through that phone's `notify.mobile_app_<device>` service (or `notify.mobile_app` with the
+  phone as target) **with** the Companion app fields below. `notify.send_message` cannot carry
+  them, so the phone would otherwise put the notification in its default "General" channel.
+- **Other notify entities** (`notify.*`): sent with `notify.send_message` (message and title only).
 - **Notify services** such as `mobile_app_<device>`: sent with `notify.<service>`; the data
   contains the Companion app fields:
 
@@ -43,6 +47,7 @@ title: "Home Modes"
 data:
   channel: HM_ModeChanges      # Android
   importance: low              # Android
+  group: HM_ModeChanges        # iOS thread / Android group (one stack per channel)
   push:
     interruption-level: passive   # iOS: passive | active | time-sensitive
 ```
@@ -51,7 +56,8 @@ Android and iOS fields are sent together; each app ignores the other's. Android 
 channel's importance only the first time the channel is created on the device; change it
 afterwards in the Android notification settings. Field names checked against the Companion app
 documentation (basic notifications): `data.channel`, `data.importance`
-(`min|low|default|high|max`), `data.push.interruption-level`.
+(`min|low|default|high|max`), `data.group`, `data.push.interruption-level`. iOS has no channels:
+the `HM_` name groups the notifications (`group`) and `interruption-level` sets how they interrupt.
 
 ## Templates
 

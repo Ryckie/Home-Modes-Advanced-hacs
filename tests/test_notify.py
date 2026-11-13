@@ -7,7 +7,8 @@ import contextlib
 from freezegun.api import FrozenDateTimeFactory
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError
-from pytest_homeassistant_custom_component.common import async_mock_service
+from homeassistant.helpers import entity_registry as er
+from pytest_homeassistant_custom_component.common import MockConfigEntry, async_mock_service
 
 from custom_components.home_modes.models import ChangeSource
 from custom_components.home_modes.notify import (
@@ -77,6 +78,7 @@ async def test_payload_per_platform_and_channels(
     assert data["data"] == {
         "channel": CHANNEL_MODE_CHANGES,
         "importance": "low",
+        "group": CHANNEL_MODE_CHANGES,
         "push": {"interruption-level": "passive"},
     }
     assert data["title"] == "Home Modes"
@@ -114,13 +116,14 @@ def test_build_payload_fields() -> None:
         "data": {
             "channel": "HM_Guests",
             "importance": "default",
+            "group": "HM_Guests",
             "push": {"interruption-level": "active"},
         },
     }
 
 
 async def test_notify_entity_target(hass: HomeAssistant, freezer: FrozenDateTimeFactory) -> None:
-    """Notify entities are used through notify.send_message (message and title only)."""
+    """Other notify entities are used through notify.send_message (message and title only)."""
     sent = async_mock_service(hass, "notify", "send_message")
     await setup_entry(
         hass, freezer, _opts({"event": "any_change", "targets": ["notify.phone"], "title": "Mode"})
@@ -310,3 +313,50 @@ async def test_suppressed_messages_are_never_silent(
         if e["rule"] == "notification_suppressed"
     ]
     assert reasons == ["most_specific_rule_wins", "rate_limited"]
+
+
+def _companion_entity(hass: HomeAssistant, device_name: str = "Pixel 9") -> str:
+    """Register a mobile_app notify entity the way the Companion app integration does."""
+    entry = MockConfigEntry(
+        domain="mobile_app", data={"device_name": device_name, "webhook_id": "hook123"}
+    )
+    entry.add_to_hass(hass)
+    return (
+        er.async_get(hass)
+        .async_get_or_create("notify", "mobile_app", "dev-1", config_entry=entry)
+        .entity_id
+    )
+
+
+async def test_companion_entity_target_keeps_the_channel(
+    hass: HomeAssistant, freezer: FrozenDateTimeFactory
+) -> None:
+    """A Companion app notify entity goes through its mobile_app service with HM_ channel data.
+
+    notify.send_message cannot carry data, so the phone would use its default "General"
+    channel; the device's mobile_app_<name> service is used instead.
+    """
+    entity_id = _companion_entity(hass)
+    phone = async_mock_service(hass, "notify", "mobile_app_pixel_9")
+    sent = async_mock_service(hass, "notify", "send_message")
+    await setup_entry(hass, freezer, _opts({"event": "any_change", "targets": [entity_id]}))
+    await call(hass, "set_mode", {"mode": "night"})
+    await hass.async_block_till_done()
+    assert not sent
+    assert len(phone) == 1
+    data = phone[0].data["data"]
+    assert data["channel"] == data["group"] == CHANNEL_MODE_CHANGES
+    assert data["push"] == {"interruption-level": "passive"}
+
+
+async def test_companion_entity_falls_back_to_the_platform_service(
+    hass: HomeAssistant, freezer: FrozenDateTimeFactory
+) -> None:
+    """Without the per-device service, notify.mobile_app is called with the webhook target."""
+    entity_id = _companion_entity(hass, "Unmatched")
+    platform = async_mock_service(hass, "notify", "mobile_app")
+    await setup_entry(hass, freezer, _opts({"event": "denied", "targets": [entity_id]}))
+    hass.bus.async_fire("home_modes_denied", {"role": "away", "reason": "not_allowed"})
+    await hass.async_block_till_done()
+    assert platform[0].data["target"] == ["hook123"]
+    assert platform[0].data["data"]["channel"] == CHANNEL_ALERTS

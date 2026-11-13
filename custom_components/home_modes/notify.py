@@ -10,8 +10,10 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.exceptions import TemplateError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.template import Template
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 
 from .const import EVENT_DENIED, ROLE_GUEST, ROLE_VACATION
 from .coordinator import HomeModesCoordinator
@@ -48,6 +50,7 @@ _PROFILES: dict[str, tuple[str, str, str]] = {
 SEND_TIMEOUT_S = 30
 REASON_RATE_LIMIT = "rate_limited"
 REASON_SPECIFIC = "most_specific_rule_wins"
+MOBILE_APP = "mobile_app"
 
 
 def _mask(target: str) -> str:
@@ -64,6 +67,7 @@ def build_payload(event: str, message: str, title: str) -> dict[str, Any]:
         "data": {
             "channel": channel,  # Android
             "importance": importance,  # Android
+            "group": channel,  # iOS thread and Android group: one stack per channel
             "push": {"interruption-level": level},  # iOS
         },
     }
@@ -259,14 +263,41 @@ class Notifier:
         self, event: str, rule: NotifyRule, message: str, title: str, batch: int
     ) -> None:
         for entity_id in rule.targets:
-            if self._allow(entity_id, message, event, batch):
-                data: dict[str, Any] = {"entity_id": entity_id, "message": message}
-                if title:
-                    data["title"] = title
-                await self._async_call("send_message", data, entity_id)
+            if not self._allow(entity_id, message, event, batch):
+                continue
+            # notify.send_message carries only message and title, so a Companion app
+            # entity would land in the app's default channel ("General"). Send to the
+            # same phone through its mobile_app service, with the channel data.
+            if (mobile := self._mobile_app_call(entity_id)) is not None:
+                service, extra = mobile
+                payload = build_payload(event, message, title)
+                await self._async_call(service, {**payload, **extra}, entity_id)
+                continue
+            data: dict[str, Any] = {"entity_id": entity_id, "message": message}
+            if title:
+                data["title"] = title
+            await self._async_call("send_message", data, entity_id)
         for service in rule.services:
             if self._allow(f"notify.{service}", message, event, batch):
                 await self._async_call(service, build_payload(event, message, title), service)
+
+    def _mobile_app_call(self, entity_id: str) -> tuple[str, dict[str, Any]] | None:
+        """Return (notify service, extra data) for a Companion app notify entity, else None."""
+        entry = er.async_get(self.hass).async_get(entity_id)
+        if entry is None or entry.platform != MOBILE_APP or not entry.config_entry_id:
+            return None
+        config_entry = self.hass.config_entries.async_get_entry(entry.config_entry_id)
+        if config_entry is None:
+            return None
+        device_name = config_entry.data.get("device_name")
+        webhook_id = config_entry.data.get("webhook_id")
+        if device_name:
+            service = f"{MOBILE_APP}_{slugify(device_name)}"
+            if self.hass.services.has_service("notify", service):
+                return service, {}
+        if webhook_id and self.hass.services.has_service("notify", MOBILE_APP):
+            return MOBILE_APP, {"target": [webhook_id]}
+        return None
 
     def _allow(self, target: str, message: str, event: str, batch: int) -> bool:
         reason = self._suppressed_reason(target, message, event, batch)

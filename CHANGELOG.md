@@ -13,6 +13,11 @@ All notable changes are listed here. The format follows
 
 ### Fixed
 
+- Notifications to a Companion app notify entity (picked under *Targets*) arrived in the
+  phone's default "General" channel: `notify.send_message` only carries message and title.
+  They are now sent through the phone's `mobile_app` service with the `HM_ModeChanges`,
+  `HM_Alerts` or `HM_Guests` channel, importance and iOS interruption level.
+- Notifications also carry `group` (same `HM_` name), so iOS stacks them per channel.
 - Alarmo bridge: when Alarmo refuses to arm after its exit delay (open sensors), it puts the
   previous state back before it reports the failure. Home Modes took that revert as a keypad
   disarm and switched to the disarmed mode (usually Home) without reporting anything. The
