@@ -20,8 +20,9 @@ happens; attach the log lines listed at the end when something does not match.
 1. Arm Alarmo **Night** from the Alarmo panel. Expect: after the exit delay Home Modes switches
    to Night, `sensor.home_mode_trigger_reason` says source `alarmo`, rule `alarmo:armed_night`,
    and the history entry shows source `alarmo`. No call goes back to Alarmo.
-2. Check the override: let the presence/schedule rule try to change the mode (or call
-   `home_modes.set_auto` to see it clear). A lower-priority rule must not undo Night.
+2. Check the override: set *Manual override* to *Until set_auto* and let a presence or
+   schedule rule trigger: Night stays. Call `home_modes.set_auto` to clear it. (With the
+   default *Next auto-rule trigger*, that trigger ends the override and applies, by design.)
 3. Disarm Alarmo. Expect: Home Modes switches to Home (`alarmo:disarmed`).
 4. With the Ring keypad: press Arm Away and disarm with the code. Expect the same as above and
    that the keypad shows the Alarmo state exactly as without Home Modes.

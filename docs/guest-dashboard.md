@@ -21,10 +21,10 @@ you allow.
 
 Settings → Devices & services → Home Modes Advanced → **Configure** → *User permissions*:
 
-1. Pick the user.
+1. Pick the user (administrators are not listed; they are always unrestricted).
 2. Choose **Allow-list** and tick the modes and overlays they may set, for example Home and
    Guest.
-3. Save.
+3. Submit. The rule is saved right away.
 
 Effects for an allow-list user: they can change only the listed roles, and they cannot use
 `set_auto` or the Auto switch. A user without a rule, or with *Unrestricted*, can change every

@@ -53,13 +53,15 @@ HACS requires at least `icon.png`.
 
 ## Must test before 1.0 (real devices)
 
-Do these on a real instance and note the result in the release PR.
+Do these on a real instance and note the result in the release PR. Results of the
+run on 2026.11.1: [real-instance-test-2026-11.md](real-instance-test-2026-11.md)
+(the ticked items; the Ring keypad part of the Alarmo test is still open).
 
 - [ ] **HACS pre-release display:** add the repository as a custom repository and check which
       version HACS offers for the v0.9.1 pre-release (UNVERIFIED how pre-releases are shown).
 - [ ] **Marketplace on 2026.11:** install through Settings → Marketplace (UNVERIFIED).
 - [ ] **Fresh install** on 2026.10.4 and on 2026.11.x: add the integration, both presets.
-- [ ] **Real Alarmo** with the steps in [real-alarmo-test.md](real-alarmo-test.md): arm and
+- [x] **Real Alarmo** with the steps in [real-alarmo-test.md](real-alarmo-test.md): arm and
       disarm from the Alarmo panel and from a keypad; confirm no echo loop and that Home Modes
       never disarms without "allow disarm".
 - [ ] **iOS Companion app:** notification arrives with the right interruption level; the
@@ -68,11 +70,11 @@ Do these on a real instance and note the result in the release PR.
 - [ ] **Android Companion app:** channels `HM_ModeChanges`, `HM_Alerts`, `HM_Guests` appear and
       are configurable; the cards render; a widget or tile that starts a script works
       (UNVERIFIED which widget types can run scripts).
-- [ ] **Guest account:** a real non-admin user on a guest-only dashboard can only use allowed
+- [x] **Guest account:** a real non-admin user on a guest-only dashboard can only use allowed
       modes; denied attempts show in the history; check what the user can see in the sidebar.
-- [ ] **Migration:** import a real `input_select`, check the preview, the mirror and the usage report.
-- [ ] **Restart during an override** and **restart during a temporary mode** on the real instance.
-- [ ] **A real DST change or a manual time zone change** while a night timer is armed
+- [x] **Migration:** import a real `input_select`, check the preview, the mirror and the usage report.
+- [x] **Restart during an override** and **restart during a temporary mode** on the real instance.
+- [x] **A real DST change or a manual time zone change** while a night timer is armed
       (or at least change the time zone in Settings and watch the timers).
 - [ ] **Raspberry Pi (or similar):** note memory and CPU while the integration is idle and during
       a vacation simulation with replay.

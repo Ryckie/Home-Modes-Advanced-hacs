@@ -6,6 +6,43 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Alarmo bridge: when Alarmo refuses to arm after its exit delay (open sensors), it puts the
+  previous state back before it reports the failure. Home Modes took that revert as a keypad
+  disarm and switched to the disarmed mode (usually Home) without reporting anything. The
+  revert is now recognised, the mode stays, and one `failed_to_arm` bridge error is recorded.
+- A refused change by an allow-list user is now a validation error (HTTP 400) instead of a
+  server error (HTTP 500), so Home Assistant no longer logs "Error during service call" for
+  every refused tap. The message and the `home_modes_denied` event are unchanged.
+
+### Documentation
+
+- With the default override (*Next auto-rule trigger*), the next automatic trigger also ends
+  an override started at the Alarmo panel or keypad, and the startup evaluation after a restart
+  counts as a trigger. The Alarmo docs and test scripts said otherwise; corrected.
+
+### Changed
+
+- Options: every screen is saved as soon as it is submitted (the integration reloads), so
+  closing the dialog never loses earlier changes. "Save and close" is now "Done". Confirming
+  an input_select import no longer discards other edits of the same session.
+- Options: every picker (mode, user, rule, notification event) offers "« Back (change
+  nothing)"; an empty custom mode name or input_select also goes back.
+- Options: User permissions is split into picking the user and editing the rule, which now
+  starts from the stored rule. Administrators are no longer listed (they are always
+  unrestricted).
+- Options: a new notification rule asks for the event first; the mode field only appears for
+  "Mode changed to".
+- Options: Alarmo mapping rows are saved one by one, only show the switches that matter for
+  the chosen direction, and the titles show the step (for example 2/6).
+- Options: disabled modes are no longer offered for actions, notifications, vacation
+  simulation and user permissions.
+- Options: entity pickers are filtered: motion sensors (motion, occupancy, presence),
+  charging sensors (charging/plug binary sensors and Companion app sensors) and sleep
+  sensors (binary sensors and input booleans).
+- Options: "Manual only" can no longer be combined with other night or morning methods.
+
 ## [0.9.1] - 2026-11-13
 
 Second beta (pre-release). The first tag to publish; 0.9.0 was never published.

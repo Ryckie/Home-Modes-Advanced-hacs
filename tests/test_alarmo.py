@@ -395,6 +395,27 @@ async def test_failed_to_arm_is_reported_mode_not_reverted(hass, freezer) -> Non
     assert errors[-1]["bridge"][0]["error"] == "failed_to_arm"
 
 
+async def test_failed_to_arm_after_exit_delay_real_order(hass, freezer) -> None:
+    """Real Alarmo order: it reverts the state (with open_sensors) BEFORE the event fires.
+
+    The revert to "disarmed" must not be taken as a keypad disarm (mode would go to Home)
+    and the failure is reported exactly once.
+    """
+    entry, fake = await _setup(hass, freezer, exit_delay=30)
+    await call(hass, "set_mode", {"mode": "away"})
+    assert hass.states.get(ENTITY).state == "arming"
+    fake.pending = None
+    fake.set("disarmed", Context(), open_sensors={"binary_sensor.front_door": "on"})
+    await hass.async_block_till_done()
+    hass.bus.async_fire("alarmo_failed_to_arm", {"reason": "open_sensors", "entity_id": ENTITY})
+    await hass.async_block_till_done()
+    assert primary(entry) == "away"
+    errors = [e for e in entry.runtime_data.history.entries if e["kind"] == "system"]
+    assert len(errors) == 1
+    assert errors[0]["bridge"][0]["error"] == "failed_to_arm"
+    assert "front_door" not in str(errors)  # no entity ids in the history
+
+
 async def test_failed_to_arm_from_keypad_is_ignored(hass, freezer) -> None:
     """A failed arm that was not requested by the bridge is not its business."""
     entry, _fake = await _setup(hass, freezer)

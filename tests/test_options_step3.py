@@ -124,7 +124,7 @@ async def test_night_and_morning_validation(
 
 
 async def test_user_rules_step_enforces_guest(
-    hass: HomeAssistant, freezer: FrozenDateTimeFactory, guest_user
+    hass: HomeAssistant, freezer: FrozenDateTimeFactory, guest_user, hass_admin_user
 ) -> None:
     """A guest rule saved in the options flow is enforced server-side."""
     entry = await setup_entry(hass, freezer)
@@ -132,12 +132,16 @@ async def test_user_rules_step_enforces_guest(
     result = await _step(hass, flow_id, "user_rules")
     users = result["data_schema"].schema["user"].config["options"]
     assert guest_user.id in {u["value"] for u in users}
+    # Admins are always unrestricted, so they are not offered.
+    assert hass_admin_user.id not in {u["value"] for u in users}
+    result = await hass.config_entries.options.async_configure(flow_id, {"user": guest_user.id})
+    assert result["step_id"] == "user_rule_edit"
     result = await hass.config_entries.options.async_configure(
-        flow_id, {"user": guest_user.id, "mode": "allow_list", "roles": ["home", "away"]}
+        flow_id, {"mode": "allow_list", "roles": ["home", "away"]}
     )
     assert result["type"] is FlowResultType.MENU
-    await _step(hass, flow_id, "save")
     await hass.async_block_till_done()
+    # Saved on submit, before the options are closed.
     assert entry.options["user_rules"][guest_user.id] == {
         "mode": "allow_list",
         "roles": ["home", "away"],
@@ -151,11 +155,13 @@ async def test_user_rules_step_enforces_guest(
 
     # Switching the rule back to unrestricted drops the stored roles.
     flow_id = (await hass.config_entries.options.async_init(entry.entry_id))["flow_id"]
-    await _step(
-        hass,
-        flow_id,
-        "user_rules",
-        {"user": guest_user.id, "mode": "unrestricted", "roles": ["home"]},
+    result = await _step(hass, flow_id, "user_rules", {"user": guest_user.id})
+    # The edit screen starts from the stored rule.
+    schema = {str(k): k for k in result["data_schema"].schema}
+    assert schema["mode"].default() == "allow_list"
+    assert schema["roles"].default() == ["home", "away"]
+    await hass.config_entries.options.async_configure(
+        flow_id, {"mode": "unrestricted", "roles": ["home"]}
     )
     await _step(hass, flow_id, "save")
     await hass.async_block_till_done()

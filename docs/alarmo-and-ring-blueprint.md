@@ -78,8 +78,10 @@ this mode* (`from_alarmo`). A row with both off is disabled. A mode can be used 
 ### Alarmo → Home Modes
 
 An Alarmo state change becomes a mode change with source `alarmo` (rank 1, same as manual).
-It starts an override according to the override settings (*Manual override*), so schedules,
-sensors and presence do not undo what someone just did at the keypad. Attribute-only updates
+It starts an override according to the override settings (*Manual override*). With the
+default *Next auto-rule trigger*, the next automatic trigger (for example everybody leaving)
+ends that override and applies; choose *After a duration*, *End of day* or *Until set_auto*
+if a keypad change should hold longer. Attribute-only updates
 are ignored.
 
 ### Home Modes → Alarmo

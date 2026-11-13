@@ -160,6 +160,7 @@ and [release-checklist.md](docs/release-checklist.md).
 - [Security and quality review](docs/security-and-quality.md)
 - [Testing with a real Alarmo](docs/real-alarmo-test.md)
 - [Manual test checklist](docs/manual-test-checklist.md)
+- [Real-instance test results (Nov 2026)](docs/real-instance-test-2026-11.md)
 - [Release checklist](docs/release-checklist.md)
 - [Smoke test (10 minutes)](docs/smoke-test.md)
 - [Publishing guide](docs/publishing-guide.md)

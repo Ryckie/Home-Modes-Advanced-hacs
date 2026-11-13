@@ -127,6 +127,8 @@ Whatever expired while Home Assistant was down is applied once, in this order: e
 temporary mode (revert), expired override (cleared), then one evaluation of all auto-rules in
 rank order. This evaluation is level-based, so a rule whose condition is still true at
 startup (for example night window active and the mode changed before it began) applies.
+A `next_auto` override counts it as a trigger: a manual Away while everybody is still home
+becomes Home after a restart. Use `duration`, `end_of_day` or `set_auto` to keep it.
 
 ## Time zones, DST and clock changes
 

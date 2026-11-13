@@ -36,15 +36,19 @@ Rule names (attribute `rule`, event field `rule`): `night_time_window`, `night_s
 
 Settings → Devices & services → Home Modes Advanced → Configure:
 
+Every screen is saved (and the integration reloaded) as soon as you submit it, so closing the
+dialog never loses earlier changes. Screens that ask you to pick a mode, user or rule first
+offer **« Back (change nothing)** to return to the menu. **Done** closes the options.
+
 - Rename or enable/disable a mode, change the order, add/remove custom modes.
 - **Presence and away timers:** persons, away delay (minutes, default 4), vacation after
   (hours, default 24).
 - **Night methods** and **Morning methods:** see [priority-and-overrides.md](priority-and-overrides.md).
 - **Manual override:** `next_auto` (default), `end_of_day`, `duration` (with minutes),
   `set_auto`.
-- **User permissions (guests):** pick a Home Assistant user, then *Unrestricted* or *Allow-list*
-  and the allowed modes. Admins are always unrestricted; users that are not listed are
-  unrestricted. Permissions are enforced server-side.
+- **User permissions (guests):** pick a Home Assistant user (admins are not listed: they are
+  always unrestricted), then *Unrestricted* or *Allow-list* and the allowed modes. The next
+  screen starts from the user's current rule; users without a rule are unrestricted. Permissions are enforced server-side.
 - **Integrations** (sub-menu):
   - **Enter and exit actions**: per mode, overlay or custom mode, plus the timeout per action
     (default 30 s). See below.

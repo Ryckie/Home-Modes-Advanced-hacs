@@ -297,7 +297,8 @@ async def test_options_flow_import_confirmed(
     assert result["description_placeholders"]["mirror"] == "on"
     assert json.dumps(dict(entry.options), sort_keys=True) == before  # nothing written yet
     result = await hass.config_entries.options.async_configure(flow_id, {"confirm": True})
-    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["type"] is FlowResultType.MENU
+    assert result["step_id"] == "integrations"
     await hass.async_block_till_done()
     assert entry.options["mirror"]["enabled"] is True
     assert {r["id"]: r["name"] for r in entry.options["roles"]}["custom_1"] == "Movie"
@@ -323,22 +324,22 @@ async def test_options_flow_import_declined_and_invalid(
     assert json.dumps(dict(entry.options), sort_keys=True) == before
 
 
-async def test_options_flow_import_saves_only_the_import(
+async def test_options_flow_import_keeps_earlier_edits(
     hass: HomeAssistant, freezer: FrozenDateTimeFactory
 ) -> None:
-    """A pending, unrelated edit of the same options session is NOT saved with the import."""
+    """Edits made earlier in the same options session are saved and kept by the import."""
     entry = await setup_entry(hass, freezer)
     entity = await _input_select(hass, ["Home", "Night", "Movie"])
     configure = hass.config_entries.options.async_configure
     flow_id = (await hass.config_entries.options.async_init(entry.entry_id))["flow_id"]
-    # Pending unrelated edit: change the away delay on the presence screen (not saved yet).
+    # Unrelated edit: change the away delay on the presence screen (saved on submit).
     result = await configure(flow_id, {"next_step_id": "presence"})
     assert result["step_id"] == "presence"
     schema_keys = {str(k): k for k in result["data_schema"].schema}
     assert "away_delay_min" in schema_keys
     result = await configure(flow_id, {"persons": [], "away_delay_min": 17, "vacation_after_h": 48})
     assert result["type"] is FlowResultType.MENU
-    # Pending role rename (also unsaved).
+    # Role rename (also saved on submit).
     result = await configure(flow_id, {"next_step_id": "edit_role"})
     result = await configure(flow_id, {"role": "night"})
     result = await configure(flow_id, {"name": "Bedtime", "enabled": True})
@@ -360,7 +361,7 @@ async def test_options_flow_import_saves_only_the_import(
     assert result["step_id"] == "import_confirm"
     assert result["description_placeholders"]["mirror_overlays"] == "on"
     result = await configure(flow_id, {"confirm": True})
-    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["type"] is FlowResultType.MENU
     await hass.async_block_till_done()
     options = entry.options
     roles = {r["id"]: r for r in options["roles"]}
@@ -371,16 +372,16 @@ async def test_options_flow_import_saves_only_the_import(
         "mapping": {"home": "Home", "night": "Night", "custom_1": "Movie"},
         "overlays": True,
     }
-    # The pending edits are not.
-    assert options.get("away_delay_min") != 17
-    assert '"vacation_after_h": 48' not in json.dumps(dict(options), default=dict)
-    assert roles["night"]["name"] != "Bedtime"
+    # The earlier edits are kept; the import renamed Bedtime back to its option text.
+    assert options["away_delay_min"] == 17
+    assert options["vacation_after_h"] == 48
+    assert roles["night"]["name"] == "Night"
 
 
 async def test_options_flow_import_uses_saved_roles_in_the_preview(
     hass: HomeAssistant, freezer: FrozenDateTimeFactory
 ) -> None:
-    """The preview is built from the stored roles, so what is shown is what is saved."""
+    """The preview is built from the stored roles, which include earlier edits."""
     entry = await setup_entry(hass, freezer)
     entity = await _input_select(hass, ["Home", "Night"])
     configure = hass.config_entries.options.async_configure
@@ -394,7 +395,7 @@ async def test_options_flow_import_uses_saved_roles_in_the_preview(
     result = await configure(
         flow_id, {"Home": "home", "Night": "night", "mirror_to_old_input_select": False}
     )
-    assert "was Night" in result["description_placeholders"]["preview"]
+    assert "was Bedtime" in result["description_placeholders"]["preview"]
     hass.config_entries.options.async_abort(flow_id)
 
 
